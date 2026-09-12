@@ -155,7 +155,7 @@
                 <label>Password</label>
                 <input type="password" id="loginPass" placeholder="Enter password">
             </div>
-            <button class="btn-primary" style="width: 100%; margin-top: 5px;" onclick="handleLogin()">Login to Portal</button>
+            <button class="btn-primary" style="width: 100%; margin-top: 5px;" onclick="window.handleLogin()">Login to Portal</button>
         </div>
     </div>
 
@@ -167,7 +167,7 @@
             </div>
             <div class="user-info">
                 👤 <span id="currentUserName"></span>
-                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                <button class="logout-btn" onclick="window.handleLogout()">Logout</button>
             </div>
         </div>
 
@@ -199,17 +199,17 @@
             <div class="form-group" style="margin-top: 10px;">
                 <label>Content</label>
                 <div class="editor-toolbar">
-                    <button type="button" id="btn-bold" onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
-                    <button type="button" id="btn-italic" onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
-                    <button type="button" id="btn-underline" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
-                    <button type="button" id="btn-strikeThrough" onclick="formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
-                    <select id="select-fontName" onchange="formatDoc('fontName', this.value)">
+                    <button type="button" id="btn-bold" onclick="window.formatDoc('bold')" title="Bold"><b>B</b></button>
+                    <button type="button" id="btn-italic" onclick="window.formatDoc('italic')" title="Italic"><i>I</i></button>
+                    <button type="button" id="btn-underline" onclick="window.formatDoc('underline')" title="Underline"><u>U</u></button>
+                    <button type="button" id="btn-strikeThrough" onclick="window.formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                    <select id="select-fontName" onchange="window.formatDoc('fontName', this.value)">
                         <option value="">Font</option>
                         <option value="Calibri">Calibri</option>
                         <option value="Arial">Arial</option>
                         <option value="Segoe UI">Segoe UI</option>
                     </select>
-                    <select id="select-fontSize" onchange="formatDoc('fontSize', this.value)">
+                    <select id="select-fontSize" onchange="window.formatDoc('fontSize', this.value)">
                         <option value="">Size</option>
                         <option value="3">12pt</option>
                         <option value="4">14pt</option>
@@ -217,13 +217,13 @@
                         <option value="6">24pt</option>
                     </select>
                     <div class="color-palette">
-                        <span class="color-dot active-color" style="background:#1e293b;" onclick="setTextColor('#1e293b', this)"></span>
-                        <span class="color-dot" style="background:#dc2626;" onclick="setTextColor('#dc2626', this)"></span>
-                        <span class="color-dot" style="background:#16a34a;" onclick="setTextColor('#16a34a', this)"></span>
-                        <span class="color-dot" style="background:#2563eb;" onclick="setTextColor('#2563eb', this)"></span>
+                        <span class="color-dot active-color" style="background:#1e293b;" onclick="window.setTextColor('#1e293b', this)"></span>
+                        <span class="color-dot" style="background:#dc2626;" onclick="window.setTextColor('#dc2626', this)"></span>
+                        <span class="color-dot" style="background:#16a34a;" onclick="window.setTextColor('#16a34a', this)"></span>
+                        <span class="color-dot" style="background:#2563eb;" onclick="window.setTextColor('#2563eb', this)"></span>
                     </div>
-                    <button type="button" onclick="formatDoc('insertUnorderedList')">• List</button>
-                    <button type="button" onclick="formatDoc('removeFormat')">🧹</button>
+                    <button type="button" onclick="window.formatDoc('insertUnorderedList')">• List</button>
+                    <button type="button" onclick="window.formatDoc('removeFormat')">🧹</button>
                 </div>
                 <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste contents here..."></div>
             </div>
@@ -273,28 +273,33 @@
             if (sel.rangeCount > 0) savedSelection = sel.getRangeAt(0);
         });
 
-        function getUsers() {
-            let users = JSON.parse(localStorage.getItem('portalUsers'));
-            if (!users) {
-                users = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
-                localStorage.setItem('portalUsers', JSON.stringify(users));
-            }
-            return users;
-        }
-
         let currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
         let editingKey = null;
         let base64Image = '';
         let globalNotices = [];
         let globalTrash = [];
+        let globalUsers = {};
 
         window.onload = function() {
             checkAuthSession();
+
+            // Sync Users from Firebase Cloud Database
+            onValue(ref(db, 'users'), (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    const defaultUsers = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
+                    set(ref(db, 'users'), defaultUsers);
+                } else {
+                    globalUsers = data;
+                }
+            });
+
             onValue(ref(db, 'notices'), (snapshot) => {
                 const data = snapshot.val();
                 globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
                 renderAdminTables();
             });
+
             onValue(ref(db, 'trash'), (snapshot) => {
                 const data = snapshot.val();
                 globalTrash = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
@@ -306,10 +311,9 @@
             const u = document.getElementById('loginUser').value.trim().toLowerCase();
             const p = document.getElementById('loginPass').value.trim();
             const errDiv = document.getElementById('loginError');
-            const users = getUsers();
 
-            if (users[u] && users[u].pass === p) {
-                currentUser = { username: u, ...users[u] };
+            if (globalUsers[u] && globalUsers[u].pass === p) {
+                currentUser = { username: u, ...globalUsers[u] };
                 sessionStorage.setItem('activeUser', JSON.stringify(currentUser));
                 document.getElementById('loginOverlay').style.display = 'none';
                 errDiv.style.display = 'none';
@@ -332,7 +336,11 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentUserName').innerText = currentUser.name;
                 const manageLink = document.getElementById('manageUsersLink');
-                if (currentUser.role === 'admin') manageLink.style.display = 'inline-block';
+                if (currentUser.role === 'admin') {
+                    manageLink.style.display = 'inline-block';
+                } else {
+                    manageLink.style.display = 'none';
+                }
             }
         }
 
@@ -356,7 +364,7 @@
         }
 
         window.setTextColor = function(colorHex, element) {
-            formatDoc('foreColor', colorHex);
+            window.formatDoc('foreColor', colorHex);
             document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active-color'));
             element.classList.add('active-color');
         }
