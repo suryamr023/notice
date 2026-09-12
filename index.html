@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Notice Board - Management Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
@@ -22,7 +22,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             max-width: 1100px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 12px;
             background: var(--bg);
             color: var(--text-main);
             min-height: 100vh;
@@ -31,92 +31,94 @@
             justify-content: space-between;
         }
 
-        .main-content-wrapper { flex-grow: 1; }
+        .main-content-wrapper { flex-grow: 1; width: 100%; }
 
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.8); display: flex; align-items: center;
-            justify-content: center; z-index: 9999; backdrop-filter: blur(5px); padding: 20px;
+            background: rgba(15, 23, 42, 0.85); display: flex; align-items: center;
+            justify-content: center; z-index: 9999; backdrop-filter: blur(4px); padding: 15px;
         }
         .login-box {
-            background: #ffffff; padding: 30px; border-radius: 16px;
-            width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            background: #ffffff; padding: 25px; border-radius: 16px;
+            width: 100%; max-width: 380px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
             text-align: center; border: 1px solid var(--border);
         }
-        .login-box h2 { margin-bottom: 20px; color: var(--text-main); font-weight: 800; }
-        .login-box .form-group { margin-bottom: 15px; text-align: left; }
-        .login-box input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #f8fafc; }
-        .login-box input:focus { outline: 2px solid var(--primary); background: #fff; }
-        .login-error { color: #dc2626; font-size: 13px; margin-bottom: 10px; display: none; }
+        .login-box h2 { margin-bottom: 15px; color: var(--text-main); font-weight: 800; font-size: 1.3rem; }
+        .login-box .form-group { margin-bottom: 12px; text-align: left; }
+        .login-box input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc; }
+        .login-error { color: #dc2626; font-size: 12px; margin-bottom: 10px; display: none; }
 
         .top-bar {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; background: #ffffff; padding: 16px 20px;
-            border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-            border: 1px solid var(--border); flex-wrap: wrap; gap: 12px;
+            margin-bottom: 20px; background: #ffffff; padding: 14px 16px;
+            border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
         }
-        .user-info { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-        .logout-btn { background: #64748b; padding: 6px 14px; font-size: 13px; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; }
-        .logout-btn:hover { background: #475569; }
+        .user-info { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .logout-btn { background: #64748b; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; }
 
-        h1, h2 { color: var(--text-main); margin-bottom: 15px; font-weight: 800; }
-        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; margin-right: 15px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
-        .nav-link:hover { text-decoration: underline; }
+        h1, h2 { color: var(--text-main); margin-bottom: 12px; font-weight: 800; font-size: 1.25rem; }
+        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; margin-right: 12px; display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; }
 
         .form-card {
-            background: var(--card-bg); padding: 24px; border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 35px; border: 1px solid var(--border);
+            background: var(--card-bg); padding: 16px; border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid var(--border);
         }
 
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        
-        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.88rem; color: #475569; }
-        input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #f8fafc; }
-        input:focus, select:focus { outline: 2px solid var(--primary); background: #fff; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+        @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
+
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.82rem; color: #475569; }
+        input[type="text"], input[type="password"], select, input[type="file"] {
+            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc;
+        }
 
         .editor-toolbar {
-            background: #f8fafc; padding: 10px; border: 1px solid var(--border);
-            border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+            background: #f8fafc; padding: 6px; border: 1px solid var(--border);
+            border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
         }
         .editor-toolbar button, .editor-toolbar select {
-            background: #fff; border: 1px solid var(--border); padding: 6px 10px;
-            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 13px; color: #334155;
+            background: #fff; border: 1px solid var(--border); padding: 5px 8px;
+            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; color: #334155;
         }
-        .editor-toolbar button:hover { background: #e2e8f0; }
         .editor-toolbar button.active { background: #e0e7ff; color: var(--primary); border-color: var(--primary); }
 
-        .color-palette { display: inline-flex; gap: 4px; align-items: center; background: #fff; border: 1px solid var(--border); padding: 3px 6px; border-radius: 6px; }
-        .color-dot { width: 16px; height: 16px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); display: inline-block; }
-        .color-dot.active-color { transform: scale(1.2); box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--primary); z-index: 2; }
+        .color-palette { display: inline-flex; gap: 3px; align-items: center; background: #fff; border: 1px solid var(--border); padding: 2px 4px; border-radius: 6px; }
+        .color-dot { width: 14px; height: 14px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); display: inline-block; }
+        .color-dot.active-color { transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary); }
 
         .content-editable {
-            width: 100%; min-height: 200px; padding: 15px; border: 1px solid var(--border);
-            border-radius: 0 0 8px 8px; background: #fff; overflow-y: auto; font-size: 15px; line-height: 1.6;
+            width: 100%; min-height: 180px; padding: 12px; border: 1px solid var(--border);
+            border-radius: 0 0 8px 8px; background: #fff; overflow-y: auto; font-size: 15px; line-height: 1.5;
         }
-        .content-editable:focus { outline: 2px solid var(--primary); }
 
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 22px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; transition: background 0.2s; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; width: 100%; }
+        @media (min-width: 640px) { .btn-primary { width: auto; } }
         .btn-primary:hover { background: var(--primary-hover); }
-        .cancel-btn { background: #64748b; display: none; margin-left: 10px; }
+        .cancel-btn { background: #64748b; display: none; margin-top: 8px; }
+        @media (min-width: 640px) { .cancel-btn { margin-top: 0; margin-left: 8px; } }
 
-        .notice-list-container { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; margin-bottom: 35px; }
+        .notice-list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; margin-bottom: 25px; }
 
         .notice-item-card {
-            background: #ffffff; border-radius: 12px; padding: 16px 20px;
+            background: #ffffff; border-radius: 12px; padding: 14px;
             border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;
+            display: flex; flex-direction: column; gap: 12px;
         }
-        .notice-item-left { display: flex; align-items: center; gap: 15px; flex-grow: 1; overflow: hidden; min-width: 240px; }
-        .notice-item-thumb {
-            width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
-            flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted);
-        }
-        .notice-item-info h4 { font-size: 1rem; color: var(--text-main); font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
-        .notice-meta-tags { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap; }
+        @media (min-width: 640px) { .notice-item-card { flex-direction: row; align-items: center; justify-content: space-between; } }
 
-        .action-btns { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
-        .action-btns button { padding: 7px 12px; border-radius: 6px; border: none; color: white; cursor: pointer; font-size: 12px; font-weight: 700; }
+        .notice-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        .notice-item-thumb {
+            width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
+            flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
+        }
+        .notice-item-info h4 { font-size: 0.95rem; color: var(--text-main); font-weight: 700; margin-bottom: 3px; word-break: break-word; }
+        .notice-meta-tags { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
+
+        .action-btns { display: flex; gap: 6px; width: 100%; }
+        @media (min-width: 640px) { .action-btns { width: auto; } }
+        .action-btns button { padding: 6px 10px; border-radius: 6px; border: none; color: white; cursor: pointer; font-size: 11px; font-weight: 700; flex: 1; text-align: center; }
         .edit-btn { background: #0284c7; }
         .hide-btn { background: #d97706; }
         .unhide-btn { background: #16a34a; }
@@ -124,24 +126,17 @@
         .restore-btn { background: #16a34a; }
         .disabled-action { opacity: 0.5; cursor: not-allowed !important; }
 
-        .badge { padding: 3px 8px; font-size: 10px; font-weight: 800; border-radius: 6px; color: white; text-transform: uppercase; }
+        .badge { padding: 2px 6px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
         .badge-visible { background: #16a34a; }
         .badge-hidden { background: #d97706; }
         .priority-normal { background: #64748b; }
         .priority-important { background: #d97706; }
         .priority-urgent { background: #dc2626; }
 
-        .empty-state { text-align: center; padding: 35px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.95rem; }
-        .recycle-bin-section { background: #fff5f5; padding: 20px; border: 1px dashed #fca5a5; border-radius: 16px; margin-top: 40px; }
+        .empty-state { text-align: center; padding: 25px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.9rem; }
+        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; }
 
-        .site-footer { text-align: center; padding: 25px 0 15px 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 40px; }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .form-row { grid-template-columns: 1fr; }
-            .notice-item-card { flex-direction: column; align-items: stretch; }
-            .action-btns { justify-content: flex-end; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-        }
+        .site-footer { text-align: center; padding: 20px 0 10px 0; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -165,11 +160,11 @@
     <div class="main-content-wrapper">
         <div class="top-bar">
             <div>
-                <a href="display.html" target="_blank" class="nav-link">🔗 Open Public Board</a>
-                <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
+                <a href="display.html" target="_blank" class="nav-link">🔗 Public Board</a>
+                <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Users</a>
             </div>
             <div class="user-info">
-                👤 <span id="currentUserName" style="font-weight:800;"></span> (<span id="currentUserRole" style="text-transform:capitalize; color:#64748b;"></span>)
+                👤 <span id="currentUserName"></span>
                 <button class="logout-btn" onclick="handleLogout()">Logout</button>
             </div>
         </div>
@@ -178,12 +173,12 @@
             <h1 id="formTitle">Add New Notice</h1>
             
             <div class="form-row">
-                <div class="form-group" style="margin-bottom:0;">
+                <div class="form-group">
                     <label for="noticeHeading">Heading</label>
                     <input type="text" id="noticeHeading" placeholder="Enter notice heading...">
                 </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label for="noticePriority">Importance / Priority Level</label>
+                <div class="form-group">
+                    <label for="noticePriority">Priority Level</label>
                     <select id="noticePriority">
                         <option value="normal">Standard / Normal</option>
                         <option value="important">Important (Highlighted)</option>
@@ -192,70 +187,48 @@
                 </div>
             </div>
 
-            <div class="form-row" style="margin-top: 15px;">
-                <div class="form-group" style="margin-bottom:0; grid-column: span 2;">
+            <div class="form-row">
+                <div class="form-group" style="grid-column: span 1;">
                     <label for="noticeImage">Attach Image (Optional)</label>
                     <input type="file" id="noticeImage" accept="image/*">
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 15px;">
+            <div class="form-group" style="margin-top: 10px;">
                 <label>Content</label>
                 <div class="editor-toolbar">
                     <button type="button" id="btn-bold" onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
                     <button type="button" id="btn-italic" onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
                     <button type="button" id="btn-underline" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
                     <button type="button" id="btn-strikeThrough" onclick="formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
-
-                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
                     <select id="select-fontName" onchange="formatDoc('fontName', this.value)">
-                        <option value="">Font Family</option>
+                        <option value="">Font</option>
                         <option value="Calibri">Calibri</option>
                         <option value="Arial">Arial</option>
                         <option value="Segoe UI">Segoe UI</option>
-                        <option value="Verdana">Verdana</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Consolas">Consolas</option>
                     </select>
-
                     <select id="select-fontSize" onchange="formatDoc('fontSize', this.value)">
                         <option value="">Size</option>
-                        <option value="2">10pt</option>
                         <option value="3">12pt</option>
                         <option value="4">14pt</option>
                         <option value="5">18pt</option>
                         <option value="6">24pt</option>
-                        <option value="7">32pt</option>
                     </select>
-
-                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                    <span style="font-size: 11px; font-weight: 700; color: #475569;">Color:</span>
                     <div class="color-palette">
                         <span class="color-dot active-color" style="background:#1e293b;" onclick="setTextColor('#1e293b', this)"></span>
                         <span class="color-dot" style="background:#dc2626;" onclick="setTextColor('#dc2626', this)"></span>
                         <span class="color-dot" style="background:#16a34a;" onclick="setTextColor('#16a34a', this)"></span>
                         <span class="color-dot" style="background:#2563eb;" onclick="setTextColor('#2563eb', this)"></span>
                     </div>
-
-                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                    <button type="button" id="btn-justifyLeft" onclick="formatDoc('justifyLeft')">≡</button>
-                    <button type="button" id="btn-justifyCenter" onclick="formatDoc('justifyCenter')">☰</button>
-                    <button type="button" id="btn-justifyRight" onclick="formatDoc('justifyRight')">≡</button>
-
-                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                    <button type="button" id="btn-insertUnorderedList" onclick="formatDoc('insertUnorderedList')">• List</button>
+                    <button type="button" onclick="formatDoc('insertUnorderedList')">• List</button>
                     <button type="button" onclick="formatDoc('removeFormat')">🧹</button>
                 </div>
-                <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste your notice contents here..."></div>
+                <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste contents here..."></div>
             </div>
             
-            <div style="margin-top: 15px;">
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
                 <button id="submitBtn" class="btn-primary" onclick="window.saveNotice()">Add Notice</button>
-                <button id="cancelBtn" class="btn-primary cancel-btn" onclick="window.resetForm()">Cancel Edit</button>
+                <button id="cancelBtn" class="btn-primary cancel-btn" onclick="window.resetForm()">Cancel</button>
             </div>
         </div>
 
@@ -263,8 +236,8 @@
         <div class="notice-list-container" id="noticeListContainer"></div>
 
         <div class="recycle-bin-section">
-            <h2 style="color: #b91c1c;">🗑️ Recycle Bin</h2>
-            <p style="font-size: 13px; color: #b91c1c; margin-bottom: 12px;" id="trashPermissionMsg"></p>
+            <h2 style="color: #b91c1c; font-size: 1.1rem;">🗑️ Recycle Bin</h2>
+            <p style="font-size: 12px; color: #b91c1c; margin-bottom: 10px;" id="trashPermissionMsg"></p>
             <div class="notice-list-container" id="trashListContainer" style="margin-bottom:0;"></div>
         </div>
     </div>
@@ -273,7 +246,6 @@
         © 2026 Surya M R. All rights reserved.
     </footer>
 
-    <!-- Firebase Realtime Database SDK Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -295,21 +267,10 @@
         let savedSelection = null;
         const editor = document.getElementById('noticeContent');
 
-        editor.addEventListener('mouseup', saveSelectionState);
-        editor.addEventListener('keyup', saveSelectionState);
-
-        function saveSelectionState() {
+        editor.addEventListener('mouseup', () => {
             const sel = window.getSelection();
-            if (sel.rangeCount > 0) { savedSelection = sel.getRangeAt(0); }
-        }
-
-        function restoreSelectionState() {
-            if (savedSelection) {
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(savedSelection);
-            }
-        }
+            if (sel.rangeCount > 0) savedSelection = sel.getRangeAt(0);
+        });
 
         function getUsers() {
             let users = JSON.parse(localStorage.getItem('portalUsers'));
@@ -328,13 +289,11 @@
 
         window.onload = function() {
             checkAuthSession();
-            
             onValue(ref(db, 'notices'), (snapshot) => {
                 const data = snapshot.val();
                 globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
                 renderAdminTables();
             });
-
             onValue(ref(db, 'trash'), (snapshot) => {
                 const data = snapshot.val();
                 globalTrash = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
@@ -362,8 +321,6 @@
         window.handleLogout = function() {
             sessionStorage.removeItem('activeUser');
             currentUser = null;
-            document.getElementById('loginUser').value = '';
-            document.getElementById('loginPass').value = '';
             document.getElementById('loginOverlay').style.display = 'flex';
         }
 
@@ -374,20 +331,8 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentUserName').innerText = currentUser.name;
                 document.getElementById('currentUserRole').innerText = currentUser.role;
-
                 const manageLink = document.getElementById('manageUsersLink');
-                if (currentUser.role === 'admin') {
-                    manageLink.style.display = 'inline-block';
-                } else {
-                    manageLink.style.display = 'none';
-                }
-
-                const trashMsg = document.getElementById('trashPermissionMsg');
-                if (currentUser.role !== 'admin') {
-                    trashMsg.innerText = "Notice: Only users with 'Admin' role can permanently delete items.";
-                } else {
-                    trashMsg.innerText = "";
-                }
+                if (currentUser.role === 'admin') manageLink.style.display = 'inline-block';
             }
         }
 
@@ -395,16 +340,19 @@
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(uploadEvent) { base64Image = uploadEvent.target.result; };
+                reader.onload = function(e) { base64Image = e.target.result; };
                 reader.readAsDataURL(file);
             }
         });
 
         window.formatDoc = function(cmd, value = null) {
             editor.focus();
-            restoreSelectionState();
+            if (savedSelection) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedSelection);
+            }
             document.execCommand(cmd, false, value);
-            saveSelectionState();
         }
 
         window.setTextColor = function(colorHex, element) {
@@ -419,28 +367,18 @@
             const content = document.getElementById('noticeContent').innerHTML.trim();
 
             if (!heading || !content || content === '<br>') {
-                alert('Please fill out both heading and content.');
+                alert('Please fill out heading and content.');
                 return;
             }
 
-            const authorName = currentUser ? currentUser.name : 'Surya';
             let notices = [...globalNotices];
-
             if (editingKey === null) {
-                notices.push({ heading, priority, addedBy: authorName, content, image: base64Image, hidden: false });
+                notices.push({ heading, priority, addedBy: currentUser.name, content, image: base64Image, hidden: false });
             } else {
-                notices[editingKey] = {
-                    ...notices[editingKey],
-                    heading, priority, addedBy: authorName, content,
-                    image: base64Image || notices[editingKey].image || ''
-                };
+                notices[editingKey] = { ...notices[editingKey], heading, priority, content, image: base64Image || notices[editingKey].image || '' };
             }
 
-            set(ref(db, 'notices'), notices).then(() => {
-                window.resetForm();
-            }).catch((err) => {
-                alert("Error saving notice: " + err.message);
-            });
+            set(ref(db, 'notices'), notices).then(() => window.resetForm());
         }
 
         window.editNotice = function(index) {
@@ -449,7 +387,6 @@
             document.getElementById('noticePriority').value = notice.priority || 'normal';
             document.getElementById('noticeContent').innerHTML = notice.content;
             base64Image = notice.image || '';
-            
             editingKey = index;
             document.getElementById('formTitle').innerText = 'Edit Notice';
             document.getElementById('submitBtn').innerText = 'Update Notice';
@@ -457,17 +394,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function resetFormInputs() {
+        window.resetForm = function() {
+            editingKey = null;
             document.getElementById('noticeHeading').value = '';
-            document.getElementById('noticePriority').value = 'normal';
             document.getElementById('noticeContent').innerHTML = '';
             document.getElementById('noticeImage').value = '';
             base64Image = '';
-        }
-
-        window.resetForm = function() {
-            editingKey = null;
-            resetFormInputs();
             document.getElementById('formTitle').innerText = 'Add New Notice';
             document.getElementById('submitBtn').innerText = 'Add Notice';
             document.getElementById('cancelBtn').style.display = 'none';
@@ -482,12 +414,8 @@
         window.moveToTrash = function(index) {
             let notices = [...globalNotices];
             let trash = [...globalTrash];
-            const deleterName = currentUser ? currentUser.name : 'Surya';
-
-            const itemToTrash = { ...notices[index], deletedAt: new Date().getTime(), deletedBy: deleterName };
-            trash.push(itemToTrash);
+            trash.push({ ...notices[index], deletedAt: Date.now(), deletedBy: currentUser.name });
             notices.splice(index, 1);
-
             set(ref(db, 'notices'), notices);
             set(ref(db, 'trash'), trash);
             if (editingKey === index) window.resetForm();
@@ -497,20 +425,15 @@
             let trash = [...globalTrash];
             let notices = [...globalNotices];
             const item = trash[index];
-            
             delete item.deletedAt; delete item.deletedBy; item.hidden = false;
             notices.push(item);
             trash.splice(index, 1);
-
             set(ref(db, 'notices'), notices);
             set(ref(db, 'trash'), trash);
         }
 
         window.permanentDelete = function(index) {
-            if (currentUser && currentUser.role !== 'admin') {
-                alert("Permission Denied!");
-                return;
-            }
+            if (currentUser.role !== 'admin') { alert("Permission Denied!"); return; }
             if (confirm('Delete permanently?')) {
                 let trash = [...globalTrash];
                 trash.splice(index, 1);
@@ -520,86 +443,50 @@
 
         function renderAdminTables() {
             const container = document.getElementById('noticeListContainer');
-            container.innerHTML = '';
-
-            if (globalNotices.length === 0) {
-                container.innerHTML = `<div class="empty-state">📭 No active or hidden notices found. Add one above!</div>`;
-            } else {
-                globalNotices.forEach((notice, index) => {
-                    const isHidden = notice.hidden === true;
-                    const priority = notice.priority || 'normal';
-                    
-                    const card = document.createElement('div');
-                    card.className = 'notice-item-card';
-                    
-                    let thumbHTML = notice.image 
-                        ? `<img src="${notice.image}" class="notice-item-thumb" alt="Thumb">` 
-                        : `<div class="notice-item-thumb">No Img</div>`;
-
-                    card.innerHTML = `
+            container.innerHTML = globalNotices.length === 0 ? `<div class="empty-state">📭 No active notices found.</div>` : '';
+            globalNotices.forEach((notice, index) => {
+                const isHidden = notice.hidden === true;
+                container.innerHTML += `
+                    <div class="notice-item-card">
                         <div class="notice-item-left">
-                            ${thumbHTML}
+                            <div class="notice-item-thumb">${notice.image ? `<img src="${notice.image}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : 'Img'}</div>
                             <div class="notice-item-info">
                                 <h4>${escapeHTML(notice.heading)}</h4>
                                 <div class="notice-meta-tags">
-                                    <span class="badge priority-${priority}">${priority}</span>
-                                    <span>✍️ ${escapeHTML(notice.addedBy || 'Surya')}</span>
+                                    <span class="badge priority-${notice.priority || 'normal'}">${notice.priority || 'normal'}</span>
                                     <span class="badge ${isHidden ? 'badge-hidden' : 'badge-visible'}">${isHidden ? 'Hidden' : 'Visible'}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="action-btns">
                             <button class="edit-btn" onclick="window.editNotice(${index})">Edit</button>
-                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${index})">${isHidden ? 'Unhide' : 'Hide'}</button>
-                            <button class="delete-btn" onclick="window.moveToTrash(${index})">Delete</button>
+                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${index})">${isHidden ? 'Show' : 'Hide'}</button>
+                            <button class="delete-btn" onclick="window.moveToTrash(${index})">Del</button>
                         </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
+                    </div>`;
+            });
 
             const trashContainer = document.getElementById('trashListContainer');
-            trashContainer.innerHTML = '';
-
-            if (globalTrash.length === 0) {
-                trashContainer.innerHTML = `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>`;
-            } else {
-                const isAdmin = currentUser && currentUser.role === 'admin';
-                globalTrash.forEach((item, index) => {
-                    const dateStr = new Date(item.deletedAt).toLocaleDateString();
-                    const deletedBy = item.deletedBy || 'Unknown User';
-                    
-                    const card = document.createElement('div');
-                    card.className = 'notice-item-card';
-                    card.style.background = '#ffffff';
-
-                    let thumbHTML = item.image 
-                        ? `<img src="${item.image}" class="notice-item-thumb" alt="Thumb">` 
-                        : `<div class="notice-item-thumb">No Img</div>`;
-
-                    card.innerHTML = `
+            trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>` : '';
+            globalTrash.forEach((item, index) => {
+                trashContainer.innerHTML += `
+                    <div class="notice-item-card" style="background:#fff;">
                         <div class="notice-item-left">
-                            ${thumbHTML}
                             <div class="notice-item-info">
                                 <h4>${escapeHTML(item.heading)}</h4>
-                                <div class="notice-meta-tags">
-                                    <span>🗑️ By: ${escapeHTML(deletedBy)}</span>
-                                    <span>🕒 ${dateStr}</span>
-                                </div>
+                                <div class="notice-meta-tags"><span>By: ${escapeHTML(item.deletedBy || '')}</span></div>
                             </div>
                         </div>
                         <div class="action-btns">
                             <button class="restore-btn" onclick="window.restoreFromTrash(${index})">Restore</button>
-                            <button class="delete-btn ${!isAdmin ? 'disabled-action' : ''}" onclick="window.permanentDelete(${index})">Delete Forever</button>
+                            <button class="delete-btn" onclick="window.permanentDelete(${index})">Purge</button>
                         </div>
-                    `;
-                    trashContainer.appendChild(card);
-                });
-            }
+                    </div>`;
+            });
         }
 
         function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+            return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
     </script>
 </body>
