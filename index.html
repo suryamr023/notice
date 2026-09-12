@@ -254,8 +254,8 @@
             </div>
             
             <div style="margin-top: 15px;">
-                <button id="submitBtn" class="btn-primary" onclick="saveNotice()">Add Notice</button>
-                <button id="cancelBtn" class="btn-primary cancel-btn" onclick="resetForm()">Cancel Edit</button>
+                <button id="submitBtn" class="btn-primary" onclick="window.saveNotice()">Add Notice</button>
+                <button id="cancelBtn" class="btn-primary cancel-btn" onclick="window.resetForm()">Cancel Edit</button>
             </div>
         </div>
 
@@ -273,7 +273,7 @@
         © 2026 Surya M R. All rights reserved.
     </footer>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase Realtime Database Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -311,7 +311,7 @@
             }
         }
 
-        window.getUsers = function() {
+        function getUsers() {
             let users = JSON.parse(localStorage.getItem('portalUsers'));
             if (!users) {
                 users = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
@@ -329,7 +329,6 @@
         window.onload = function() {
             checkAuthSession();
             
-            // Listen to real-time Firebase changes
             onValue(ref(db, 'notices'), (snapshot) => {
                 const data = snapshot.val();
                 globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
@@ -435,12 +434,12 @@
                     heading, priority, addedBy: authorName, content,
                     image: base64Image || notices[editingKey].image || ''
                 };
-                resetForm();
             }
 
             set(ref(db, 'notices'), notices).then(() => {
-                resetFormInputs();
-                resetForm();
+                window.resetForm();
+            }).catch((err) => {
+                alert("Error saving notice: " + err.message);
             });
         }
 
@@ -491,7 +490,7 @@
 
             set(ref(db, 'notices'), notices);
             set(ref(db, 'trash'), trash);
-            if (editingKey === index) resetForm();
+            if (editingKey === index) window.resetForm();
         }
 
         window.restoreFromTrash = function(index) {
@@ -550,9 +549,9 @@
                             </div>
                         </div>
                         <div class="action-btns">
-                            <button class="edit-btn" onclick="editNotice(${index})">Edit</button>
-                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="toggleHide(${index})">${isHidden ? 'Unhide' : 'Hide'}</button>
-                            <button class="delete-btn" onclick="moveToTrash(${index})">Delete</button>
+                            <button class="edit-btn" onclick="window.editNotice(${index})">Edit</button>
+                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${index})">${isHidden ? 'Unhide' : 'Hide'}</button>
+                            <button class="delete-btn" onclick="window.moveToTrash(${index})">Delete</button>
                         </div>
                     `;
                     container.appendChild(card);
@@ -590,8 +589,8 @@
                             </div>
                         </div>
                         <div class="action-btns">
-                            <button class="restore-btn" onclick="restoreFromTrash(${index})">Restore</button>
-                            <button class="delete-btn ${!isAdmin ? 'disabled-action' : ''}" onclick="permanentDelete(${index})">Delete Forever</button>
+                            <button class="restore-btn" onclick="window.restoreFromTrash(${index})">Restore</button>
+                            <button class="delete-btn ${!isAdmin ? 'disabled-action' : ''}" onclick="window.permanentDelete(${index})">Delete Forever</button>
                         </div>
                     `;
                     trashContainer.appendChild(card);
