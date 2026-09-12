@@ -20,322 +20,142 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; height: 100vh;
             background: var(--bg-gradient);
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden;
-            color: var(--text-main);
+            overflow: hidden; color: var(--text-main);
         }
 
         body {
-            padding: 2.5vh 3vw;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            padding: 2vh 2vw; display: flex; flex-direction: column; justify-content: space-between;
         }
 
         .top-controls {
-            position: fixed;
-            top: 20px;
-            right: 25px;
-            display: flex;
-            gap: 12px;
-            z-index: 1000;
-            align-items: center;
+            position: fixed; top: 15px; right: 20px;
+            display: flex; gap: 10px; z-index: 1000; align-items: center;
         }
 
-        .live-clock {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        .live-clock, .fullscreen-btn {
+            background: #ffffff; border: 1px solid #cbd5e1;
+            padding: 6px 12px; border-radius: 8px; font-size: 12px;
+            font-weight: 700; color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
         }
-
-        .fullscreen-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        .fullscreen-btn:hover { background: #f1f5f9; transform: translateY(-2px); }
+        .fullscreen-btn:hover { background: #f1f5f9; }
 
         .bg-glow {
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            filter: blur(90px);
-            border-radius: 50%;
-            z-index: 0;
-            animation: floatGlow 9s ease-in-out infinite alternate;
-            opacity: 0.5;
+            position: absolute; width: 350px; height: 350px;
+            filter: blur(80px); border-radius: 50%; z-index: 0; opacity: 0.4;
         }
-        .glow-1 { top: -100px; left: -100px; background: rgba(99, 102, 241, 0.25); }
-        .glow-2 { bottom: -100px; right: -100px; background: rgba(236, 72, 153, 0.2); animation-delay: 4.5s; }
-        .glow-3 { top: 40%; right: 20%; width: 350px; height: 350px; background: rgba(16, 185, 129, 0.15); animation-delay: 2s; }
+        .glow-1 { top: -80px; left: -80px; background: rgba(99, 102, 241, 0.3); }
+        .glow-2 { bottom: -80px; right: -80px; background: rgba(236, 72, 153, 0.25); }
 
-        @keyframes floatGlow {
-            0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.2) translate(40px, 30px); }
-        }
-
-        .header-container {
-            text-align: center;
-            margin-bottom: 1vh;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 2;
-        }
+        .header-container { text-align: center; margin-bottom: 1vh; z-index: 2; flex-shrink: 0; }
 
         .board-title {
-            font-size: clamp(1.8rem, 2.8vw, 2.5rem);
-            font-weight: 800;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: clamp(1.5rem, 2.5vw, 2.3rem);
+            font-weight: 800; background: var(--primary-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 2px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            filter: drop-shadow(0 4px 12px rgba(99,102,241,0.15));
         }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: clamp(0.85rem, 1.1vw, 1rem);
-            font-weight: 600;
-        }
+        .subtitle { color: var(--text-muted); font-size: clamp(0.8rem, 1vw, 0.95rem); font-weight: 600; }
 
         .slideshow-wrapper {
-            max-width: 980px;
-            width: 100%;
-            margin: auto;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-            max-height: 70vh;
+            max-width: 900px; width: 100%; margin: auto;
+            flex-grow: 1; display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 2; max-height: 72vh;
         }
 
         .notice-card {
-            background: var(--card-bg);
-            border-radius: 22px;
-            padding: 30px 35px 22px 35px;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-            animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: var(--card-bg); border-radius: 20px;
+            padding: 25px 30px 20px 30px;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08);
+            position: relative; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            overflow: hidden; animation: cardEntrance 0.5s ease forwards;
         }
 
-        .notice-card.priority-urgent {
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.1);
-            border: 2px solid rgba(239, 68, 68, 0.4);
-        }
+        .notice-card.priority-urgent { border: 2px solid rgba(239, 68, 68, 0.4); }
 
         @keyframes cardEntrance {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .notice-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
             background: var(--primary-gradient);
         }
         .notice-card.priority-important::before { background: var(--important-gradient); }
         .notice-card.priority-urgent::before { background: var(--urgent-gradient); }
 
         .pushpin {
-            position: absolute;
-            top: 15px;
-            right: 22px;
-            width: 18px;
-            height: 18px;
+            position: absolute; top: 14px; right: 20px; width: 16px; height: 16px;
             background: radial-gradient(circle at 35% 35%, #fca5a5, #dc2626);
-            border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15), inset 2px 2px 4px rgba(255,255,255,0.6);
-            z-index: 3;
-        }
-        .pushpin::after {
-            content: '';
-            position: absolute;
-            bottom: -5px; left: 6px;
-            width: 6px; height: 7px;
-            background: #94a3b8;
-            border-radius: 0 0 3px 3px;
+            border-radius: 50%; box-shadow: 0 3px 6px rgba(0,0,0,0.15); z-index: 3;
         }
 
         .priority-banner {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            width: fit-content;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.68rem;
+            font-weight: 800; text-transform: uppercase; margin-bottom: 8px; width: fit-content;
         }
         .banner-important { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
-        .banner-urgent { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; animation: pulseBadge 1.2s infinite; }
-
-        @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+        .banner-urgent { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
         .notice-card img.notice-img {
-            width: 100%;
-            max-height: 140px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #e2e8f0;
-            flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 100%; max-height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
         }
 
-        .notice-content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
+        .notice-content-area { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
         .notice-card h3 {
-            font-size: clamp(1.2rem, 1.8vw, 1.5rem);
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 10px;
-            padding-right: 35px;
-            line-height: 1.3;
-            flex-shrink: 0;
+            font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 800; color: var(--text-main);
+            margin-bottom: 8px; padding-right: 30px; line-height: 1.3; flex-shrink: 0;
         }
 
         .notice-body-content {
-            color: var(--text-muted);
-            font-size: clamp(0.9rem, 1.2vw, 1.05rem);
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-word;
-            overflow-y: auto !important;
-            pointer-events: auto !important;
-            padding-right: 10px;
-            flex-grow: 1;
-            scroll-behavior: smooth;
+            color: var(--text-muted); font-size: clamp(0.85rem, 1.1vw, 1rem);
+            line-height: 1.5; white-space: pre-wrap; word-break: break-word;
+            overflow-y: auto !important; padding-right: 8px; flex-grow: 1; scroll-behavior: smooth;
         }
+        .notice-body-content::-webkit-scrollbar { width: 5px; }
+        .notice-body-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
-        .notice-body-content::-webkit-scrollbar { width: 6px; }
-        .notice-body-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .notice-body-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-        .notice-body-content table { width: 100% !important; border-collapse: collapse !important; margin: 10px 0 !important; }
-        .notice-body-content th, .notice-body-content td { border: 1px solid #cbd5e1 !important; padding: 6px 8px !important; font-size: 0.88rem !important; }
-        .notice-body-content th { background: #f1f5f9 !important; font-weight: 700; color: #0f172a; }
+        .notice-body-content table { width: 100% !important; border-collapse: collapse !important; margin: 8px 0 !important; }
+        .notice-body-content th, .notice-body-content td { border: 1px solid #cbd5e1 !important; padding: 6px !important; font-size: 0.85rem !important; }
+        .notice-body-content th { background: #f1f5f9 !important; }
 
         .notice-footer {
-            margin-top: 12px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            flex-shrink: 0;
+            margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.8rem; color: var(--text-muted); flex-shrink: 0;
         }
 
         .author-badge {
-            background: #eef2ff;
-            color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: inset 0 0 0 1px rgba(99,102,241,0.2);
+            background: #eef2ff; color: var(--primary); padding: 3px 10px;
+            border-radius: 20px; font-weight: 700; font-size: 0.78rem;
         }
 
         .progress-bar-container {
-            width: 100%;
-            height: 4px;
-            background: rgba(0, 0, 0, 0.08);
-            border-radius: 2px;
-            margin-top: 10px;
-            overflow: hidden;
-            flex-shrink: 0;
-            z-index: 2;
+            width: 100%; height: 4px; background: rgba(0, 0, 0, 0.08);
+            border-radius: 2px; margin-top: 8px; overflow: hidden; flex-shrink: 0; z-index: 2;
         }
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--primary-gradient);
-            transition: width 0.05s linear;
-        }
+        .progress-bar { height: 100%; width: 0%; background: var(--primary-gradient); transition: width 0.05s linear; }
 
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 8px;
-            flex-shrink: 0;
-            z-index: 2;
-        }
-        .dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            transition: all 0.3s ease;
-        }
-        .dot.active {
-            background: var(--primary);
-            transform: scale(1.3);
-            box-shadow: 0 0 8px rgba(99,102,241,0.4);
-        }
+        .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 6px; flex-shrink: 0; z-index: 2; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; transition: all 0.3s; }
+        .dot.active { background: var(--primary); transform: scale(1.3); }
 
         .no-notice {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--card-bg);
-            border-radius: 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            max-width: 440px;
-            margin: auto;
-            color: var(--text-main);
+            text-align: center; padding: 30px; background: var(--card-bg);
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); max-width: 400px; margin: auto;
         }
-        .no-notice-icon { font-size: 3rem; margin-bottom: 12px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} }
 
-        /* Unified Footer */
         .site-footer {
-            text-align: center;
-            padding: 10px 0 5px 0;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            flex-shrink: 0;
-            z-index: 2;
+            text-align: center; padding: 8px 0 2px 0; font-size: 0.78rem;
+            color: var(--text-muted); font-weight: 600; flex-shrink: 0; z-index: 2;
         }
     </style>
 </head>
@@ -348,7 +168,6 @@
 
     <div class="bg-glow glow-1"></div>
     <div class="bg-glow glow-2"></div>
-    <div class="bg-glow glow-3"></div>
 
     <div class="header-container">
         <h1 class="board-title"><span>📢</span> Official Notice Board</h1>
@@ -364,16 +183,33 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="site-footer">
         © 2026 Surya M R. All rights reserved.
     </footer>
 
-    <script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBeUXbdADiVfaoxpYULCx6jv9yj8p7klHI",
+            authDomain: "notes-b78bf.firebaseapp.com",
+            databaseURL: "https://notes-b78bf-default-rtdb.firebaseio.com",
+            projectId: "notes-b78bf",
+            storageBucket: "notes-b78bf.firebasestorage.app",
+            messagingSenderId: "19853194702",
+            appId: "1:19853194702:web:9603d20b0e6ec91684e79f",
+            measurementId: "G-TC8WNNDX1K"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         function updateClock() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
             document.getElementById('liveClock').innerText = `🕒 ${dateStr} | ${timeStr}`;
         }
         setInterval(updateClock, 1000);
@@ -384,20 +220,16 @@
         let progressInterval = null;
         let autoScrollInterval = null;
         let progressWidth = 0;
+        let globalNotices = [];
 
-        function initSlideshow() {
-            const notices = JSON.parse(localStorage.getItem('notices')) || [];
-            
-            const priorityWeight = { urgent: 3, important: 2, normal: 1 };
-            const visibleNotices = notices
-                .filter(notice => !notice.hidden)
-                .sort((a, b) => (priorityWeight[b.priority || 'normal'] || 1) - (priorityWeight[a.priority || 'normal'] || 1));
-            
-            if (currentIndex >= visibleNotices.length) currentIndex = 0;
-            renderCurrentNotice(visibleNotices);
-        }
+        onValue(ref(db, 'notices'), (snapshot) => {
+            const data = snapshot.val();
+            globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+            if (currentIndex >= globalNotices.filter(n => !n.hidden).length) currentIndex = 0;
+            renderCurrentNotice();
+        });
 
-        function renderCurrentNotice(visibleNotices) {
+        function renderCurrentNotice() {
             const wrapper = document.getElementById('slideshowWrapper');
             const dotsContainer = document.getElementById('carouselDots');
             
@@ -411,16 +243,21 @@
             progressWidth = 0;
             document.getElementById('progressBar').style.width = '0%';
 
+            const priorityWeight = { urgent: 3, important: 2, normal: 1 };
+            const visibleNotices = globalNotices
+                .filter(notice => !notice.hidden)
+                .sort((a, b) => (priorityWeight[b.priority || 'normal'] || 1) - (priorityWeight[a.priority || 'normal'] || 1));
+
             if (visibleNotices.length === 0) {
                 wrapper.innerHTML = `
                     <div class="no-notice">
-                        <div class="no-notice-icon">📭</div>
+                        <div style="font-size:2.5rem; margin-bottom:10px;">📭</div>
                         <h2>No Active Notices</h2>
-                        <p style="color:#64748b; margin-top:6px;">Check back later for new updates.</p>
                     </div>`;
                 return;
             }
 
+            if (currentIndex >= visibleNotices.length) currentIndex = 0;
             const notice = visibleNotices[currentIndex];
             const priority = notice.priority || 'normal';
             
@@ -428,12 +265,11 @@
             card.className = `notice-card priority-${priority}`;
             
             let imageHTML = notice.image ? `<img src="${notice.image}" class="notice-img" alt="Notice Graphic">` : '';
-            
             let priorityBadgeHTML = '';
             if (priority === 'urgent') {
-                priorityBadgeHTML = `<div class="priority-banner banner-urgent">🚨 URGENT / FLASH ANNOUNCEMENT</div>`;
+                priorityBadgeHTML = `<div class="priority-banner banner-urgent">🚨 URGENT</div>`;
             } else if (priority === 'important') {
-                priorityBadgeHTML = `<div class="priority-banner banner-important">⚠️ IMPORTANT NOTICE</div>`;
+                priorityBadgeHTML = `<div class="priority-banner banner-important">⚠️ IMPORTANT</div>`;
             }
 
             card.innerHTML = `
@@ -445,7 +281,7 @@
                     <div class="notice-body-content" id="slideContent"></div>
                 </div>
                 <div class="notice-footer">
-                    <span>Announcement ${currentIndex + 1} of ${visibleNotices.length}</span>
+                    <span>${currentIndex + 1} of ${visibleNotices.length}</span>
                     <span class="author-badge">👤 ${escapeHeading(notice.addedBy || 'Surya')}</span>
                 </div>
             `;
@@ -467,7 +303,7 @@
             const textLength = contentDiv.innerText.length || 50;
             let calculatedDuration = 5000 + (textLength * 35);
             if (calculatedDuration < 6000) calculatedDuration = 6000;
-            if (calculatedDuration > 25000) calculatedDuration = 25000;
+            if (calculatedDuration > 22000) calculatedDuration = 22000;
 
             setTimeout(() => {
                 if (contentDiv.scrollHeight > contentDiv.clientHeight) {
@@ -482,7 +318,7 @@
                         }
                     }, 50);
                 }
-            }, 600);
+            }, 500);
 
             const stepTime = 50;
             const increment = (stepTime / calculatedDuration) * 100;
@@ -494,11 +330,11 @@
 
             slideTimeout = setTimeout(() => {
                 currentIndex = (currentIndex + 1) % visibleNotices.length;
-                renderCurrentNotice(visibleNotices);
+                renderCurrentNotice();
             }, calculatedDuration);
         }
 
-        function toggleFullScreen() {
+        window.toggleFullScreen = function() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => console.log(err));
             } else if (document.exitFullscreen) {
@@ -508,15 +344,12 @@
 
         document.addEventListener('fullscreenchange', () => {
             const btn = document.getElementById('fsBtn');
-            btn.innerText = document.fullscreenElement ? 'Exit Fullscreen' : '⛶ Fullscreen';
+            btn.innerText = document.fullscreenElement ? 'Exit' : '⛶ Fullscreen';
         });
 
         function escapeHeading(str) {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
-
-        window.onload = () => initSlideshow();
-        window.addEventListener('storage', () => initSlideshow());
     </script>
 </body>
 </html>
