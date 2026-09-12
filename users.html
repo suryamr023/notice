@@ -271,7 +271,7 @@
         function getUsers() {
             let users = JSON.parse(localStorage.getItem('portalUsers'));
             if (!users) {
-                users = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
+                users = { "468757": { pass: "468757", role: "admin", name: "Surya (Master Admin)" } };
                 localStorage.setItem('portalUsers', JSON.stringify(users));
             }
             return users;
@@ -373,7 +373,7 @@
         }
 
         function deleteUser(username) {
-            if (username === 'surya') { alert("Cannot delete Master Admin!"); return; }
+            if (username === '468757') { alert("Cannot delete Master Admin!"); return; }
             if (confirm(`Delete login ID '${username}'?`)) {
                 let users = getUsers();
                 delete users[username];
