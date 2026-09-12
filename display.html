@@ -187,7 +187,7 @@
         © 2026 Surya M R. All rights reserved.
     </footer>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase Realtime Database SDK Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -210,7 +210,8 @@
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
-            document.getElementById('liveClock').innerText = `🕒 ${dateStr} | ${timeStr}`;
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) clockEl.innerText = `🕒 ${dateStr} | ${timeStr}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -221,18 +222,24 @@
         let autoScrollInterval = null;
         let progressWidth = 0;
         let globalNotices = [];
+        let isInitialLoad = true;
 
         onValue(ref(db, 'notices'), (snapshot) => {
             const data = snapshot.val();
             globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-            if (currentIndex >= globalNotices.filter(n => !n.hidden).length) currentIndex = 0;
-            renderCurrentNotice();
+            
+            if (isInitialLoad) {
+                isInitialLoad = false;
+                renderCurrentNotice();
+            }
         });
 
         function renderCurrentNotice() {
             const wrapper = document.getElementById('slideshowWrapper');
             const dotsContainer = document.getElementById('carouselDots');
             
+            if (!wrapper || !dotsContainer) return;
+
             wrapper.innerHTML = '';
             dotsContainer.innerHTML = '';
 
@@ -241,11 +248,12 @@
             if (autoScrollInterval) clearInterval(autoScrollInterval);
 
             progressWidth = 0;
-            document.getElementById('progressBar').style.width = '0%';
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) progressBar.style.width = '0%';
 
             const priorityWeight = { urgent: 3, important: 2, normal: 1 };
             const visibleNotices = globalNotices
-                .filter(notice => !notice.hidden)
+                .filter(notice => notice && !notice.hidden)
                 .sort((a, b) => (priorityWeight[b.priority || 'normal'] || 1) - (priorityWeight[a.priority || 'normal'] || 1));
 
             if (visibleNotices.length === 0) {
@@ -254,6 +262,8 @@
                         <div style="font-size:2.5rem; margin-bottom:10px;">📭</div>
                         <h2>No Active Notices</h2>
                     </div>`;
+                // Check again in 3 seconds if notices are added
+                slideTimeout = setTimeout(renderCurrentNotice, 3000);
                 return;
             }
 
@@ -277,7 +287,7 @@
                 <div class="notice-content-area">
                     ${priorityBadgeHTML}
                     ${imageHTML}
-                    <h3>${escapeHeading(notice.heading)}</h3>
+                    <h3>${escapeHeading(notice.heading || '')}</h3>
                     <div class="notice-body-content" id="slideContent"></div>
                 </div>
                 <div class="notice-footer">
@@ -288,10 +298,11 @@
             wrapper.appendChild(card);
 
             const contentDiv = card.querySelector('#slideContent');
-            if (notice.content.includes('<') && notice.content.includes('>')) {
-                contentDiv.innerHTML = notice.content;
+            const rawContent = notice.content || '';
+            if (rawContent.includes('<') && rawContent.includes('>')) {
+                contentDiv.innerHTML = rawContent;
             } else {
-                contentDiv.textContent = notice.content;
+                contentDiv.textContent = rawContent;
             }
 
             visibleNotices.forEach((_, idx) => {
@@ -325,7 +336,7 @@
             progressInterval = setInterval(() => {
                 progressWidth += increment;
                 if (progressWidth > 100) progressWidth = 100;
-                document.getElementById('progressBar').style.width = progressWidth + '%';
+                if (progressBar) progressBar.style.width = progressWidth + '%';
             }, stepTime);
 
             slideTimeout = setTimeout(() => {
@@ -344,7 +355,7 @@
 
         document.addEventListener('fullscreenchange', () => {
             const btn = document.getElementById('fsBtn');
-            btn.innerText = document.fullscreenElement ? 'Exit' : '⛶ Fullscreen';
+            if (btn) btn.innerText = document.fullscreenElement ? 'Exit' : '⛶ Fullscreen';
         });
 
         function escapeHeading(str) {
