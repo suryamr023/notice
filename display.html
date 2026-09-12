@@ -15,7 +15,6 @@
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-muted: #475569;
-            --accent-pin: #ef4444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,18 +29,35 @@
         }
 
         body {
-            padding: 3vh 3vw;
+            padding: 2.5vh 3vw;
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        /* Fullscreen Toggle Button */
-        .fullscreen-btn {
+        .top-controls {
             position: fixed;
             top: 20px;
             right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .live-clock {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .fullscreen-btn {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             padding: 8px 16px;
@@ -50,13 +66,11 @@
             font-size: 13px;
             font-weight: 700;
             color: var(--text-main);
-            z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
         .fullscreen-btn:hover { background: #f1f5f9; transform: translateY(-2px); }
 
-        /* Colorful Animated Background Floating Orbs */
         .bg-glow {
             position: absolute;
             width: 450px;
@@ -78,35 +92,33 @@
 
         .header-container {
             text-align: center;
-            margin-bottom: 1.5vh;
+            margin-bottom: 1vh;
             flex-shrink: 0;
             position: relative;
             z-index: 2;
         }
 
         .board-title {
-            font-size: clamp(2rem, 3.2vw, 2.8rem);
+            font-size: clamp(1.8rem, 2.8vw, 2.5rem);
             font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             filter: drop-shadow(0 4px 12px rgba(99,102,241,0.15));
         }
 
         .subtitle {
             color: var(--text-muted);
-            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            font-size: clamp(0.85rem, 1.1vw, 1rem);
             font-weight: 600;
-            letter-spacing: 0.5px;
         }
 
-        /* Slideshow Centered Container */
         .slideshow-wrapper {
-            max-width: 1000px;
+            max-width: 980px;
             width: 100%;
             margin: auto;
             flex-grow: 1;
@@ -115,14 +127,13 @@
             justify-content: center;
             position: relative;
             z-index: 2;
-            max-height: 74vh;
+            max-height: 70vh;
         }
 
-        /* Notice Card Design */
         .notice-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 40px 40px 30px 40px;
+            border-radius: 22px;
+            padding: 30px 35px 22px 35px;
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
             position: relative;
             width: 100%;
@@ -144,7 +155,6 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Top Gradient Line */
         .notice-card::before {
             content: '';
             position: absolute;
@@ -155,13 +165,12 @@
         .notice-card.priority-important::before { background: var(--important-gradient); }
         .notice-card.priority-urgent::before { background: var(--urgent-gradient); }
 
-        /* Pushpin Graphic */
         .pushpin {
             position: absolute;
-            top: 18px;
-            right: 25px;
-            width: 20px;
-            height: 20px;
+            top: 15px;
+            right: 22px;
+            width: 18px;
+            height: 18px;
             background: radial-gradient(circle at 35% 35%, #fca5a5, #dc2626);
             border-radius: 50%;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15), inset 2px 2px 4px rgba(255,255,255,0.6);
@@ -170,8 +179,8 @@
         .pushpin::after {
             content: '';
             position: absolute;
-            bottom: -6px; left: 7px;
-            width: 6px; height: 8px;
+            bottom: -5px; left: 6px;
+            width: 6px; height: 7px;
             background: #94a3b8;
             border-radius: 0 0 3px 3px;
         }
@@ -180,13 +189,13 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 800;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             width: fit-content;
         }
         .banner-important { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
@@ -196,10 +205,10 @@
 
         .notice-card img.notice-img {
             width: 100%;
-            max-height: 160px;
+            max-height: 140px;
             object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             border: 1px solid #e2e8f0;
             flex-shrink: 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -214,45 +223,44 @@
         }
 
         .notice-card h3 {
-            font-size: clamp(1.3rem, 2vw, 1.7rem);
+            font-size: clamp(1.2rem, 1.8vw, 1.5rem);
             font-weight: 800;
             color: var(--text-main);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding-right: 35px;
             line-height: 1.3;
             flex-shrink: 0;
         }
 
-        /* Scrollable Content */
         .notice-body-content {
             color: var(--text-muted);
-            font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+            font-size: clamp(0.9rem, 1.2vw, 1.05rem);
             line-height: 1.6;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-y: auto !important;
             pointer-events: auto !important;
-            padding-right: 12px;
+            padding-right: 10px;
             flex-grow: 1;
+            scroll-behavior: smooth;
         }
 
         .notice-body-content::-webkit-scrollbar { width: 6px; }
         .notice-body-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .notice-body-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        .notice-body-content table { width: 100% !important; border-collapse: collapse !important; margin: 12px 0 !important; }
-        .notice-body-content th, .notice-body-content td { border: 1px solid #cbd5e1 !important; padding: 8px 10px !important; font-size: 0.9rem !important; }
+        .notice-body-content table { width: 100% !important; border-collapse: collapse !important; margin: 10px 0 !important; }
+        .notice-body-content th, .notice-body-content td { border: 1px solid #cbd5e1 !important; padding: 6px 8px !important; font-size: 0.88rem !important; }
         .notice-body-content th { background: #f1f5f9 !important; font-weight: 700; color: #0f172a; }
 
-        /* Footer */
         .notice-footer {
-            margin-top: 16px;
+            margin-top: 12px;
             border-top: 1px solid #e2e8f0;
-            padding-top: 14px;
+            padding-top: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             flex-shrink: 0;
         }
@@ -260,7 +268,7 @@
         .author-badge {
             background: #eef2ff;
             color: var(--primary);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-weight: 700;
             display: inline-flex;
@@ -269,13 +277,12 @@
             box-shadow: inset 0 0 0 1px rgba(99,102,241,0.2);
         }
 
-        /* Timer Progress Bar */
         .progress-bar-container {
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: rgba(0, 0, 0, 0.08);
-            border-radius: 3px;
-            margin-top: 15px;
+            border-radius: 2px;
+            margin-top: 10px;
             overflow: hidden;
             flex-shrink: 0;
             z-index: 2;
@@ -287,17 +294,16 @@
             transition: width 0.05s linear;
         }
 
-        /* Carousel Navigation Dots */
         .carousel-dots {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 1vh;
+            gap: 6px;
+            margin-top: 8px;
             flex-shrink: 0;
             z-index: 2;
         }
         .dot {
-            width: 10px; height: 10px;
+            width: 8px; height: 8px;
             border-radius: 50%;
             background: #cbd5e1;
             transition: all 0.3s ease;
@@ -305,27 +311,40 @@
         .dot.active {
             background: var(--primary);
             transform: scale(1.3);
-            box-shadow: 0 0 10px rgba(99,102,241,0.4);
+            box-shadow: 0 0 8px rgba(99,102,241,0.4);
         }
 
-        /* Empty State */
         .no-notice {
             text-align: center;
-            padding: 50px 30px;
+            padding: 40px 20px;
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 22px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            max-width: 480px;
+            max-width: 440px;
             margin: auto;
             color: var(--text-main);
         }
-        .no-notice-icon { font-size: 3.5rem; margin-bottom: 15px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} }
+        .no-notice-icon { font-size: 3rem; margin-bottom: 12px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} }
+
+        /* Unified Footer */
+        .site-footer {
+            text-align: center;
+            padding: 10px 0 5px 0;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            flex-shrink: 0;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
 
-    <button class="fullscreen-btn" onclick="toggleFullScreen()" id="fsBtn">⛶ Fullscreen</button>
+    <div class="top-controls">
+        <div class="live-clock" id="liveClock"></div>
+        <button class="fullscreen-btn" onclick="toggleFullScreen()" id="fsBtn">⛶ Fullscreen</button>
+    </div>
 
     <div class="bg-glow glow-1"></div>
     <div class="bg-glow glow-2"></div>
@@ -345,12 +364,26 @@
         </div>
     </div>
 
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        © 2026 Surya M R. All rights reserved.
+    </footer>
+
     <script>
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('liveClock').innerText = `🕒 ${dateStr} | ${timeStr}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
         let currentIndex = 0;
-        let slideInterval = null;
+        let slideTimeout = null;
         let progressInterval = null;
+        let autoScrollInterval = null;
         let progressWidth = 0;
-        const slideDuration = 10000;
 
         function initSlideshow() {
             const notices = JSON.parse(localStorage.getItem('notices')) || [];
@@ -371,8 +404,10 @@
             wrapper.innerHTML = '';
             dotsContainer.innerHTML = '';
 
-            if (slideInterval) clearInterval(slideInterval);
+            if (slideTimeout) clearTimeout(slideTimeout);
             if (progressInterval) clearInterval(progressInterval);
+            if (autoScrollInterval) clearInterval(autoScrollInterval);
+
             progressWidth = 0;
             document.getElementById('progressBar').style.width = '0%';
 
@@ -429,18 +464,38 @@
                 dotsContainer.appendChild(dot);
             });
 
+            const textLength = contentDiv.innerText.length || 50;
+            let calculatedDuration = 5000 + (textLength * 35);
+            if (calculatedDuration < 6000) calculatedDuration = 6000;
+            if (calculatedDuration > 25000) calculatedDuration = 25000;
+
+            setTimeout(() => {
+                if (contentDiv.scrollHeight > contentDiv.clientHeight) {
+                    let currentScroll = 0;
+                    const maxScroll = contentDiv.scrollHeight - contentDiv.clientHeight;
+                    const scrollSpeedStep = maxScroll / (calculatedDuration / 50);
+
+                    autoScrollInterval = setInterval(() => {
+                        if (currentScroll < maxScroll) {
+                            currentScroll += scrollSpeedStep;
+                            contentDiv.scrollTop = currentScroll;
+                        }
+                    }, 50);
+                }
+            }, 600);
+
             const stepTime = 50;
-            const increment = (stepTime / slideDuration) * 100;
+            const increment = (stepTime / calculatedDuration) * 100;
             progressInterval = setInterval(() => {
                 progressWidth += increment;
                 if (progressWidth > 100) progressWidth = 100;
                 document.getElementById('progressBar').style.width = progressWidth + '%';
             }, stepTime);
 
-            slideInterval = setInterval(() => {
+            slideTimeout = setTimeout(() => {
                 currentIndex = (currentIndex + 1) % visibleNotices.length;
                 renderCurrentNotice(visibleNotices);
-            }, slideDuration);
+            }, calculatedDuration);
         }
 
         function toggleFullScreen() {
@@ -453,7 +508,7 @@
 
         document.addEventListener('fullscreenchange', () => {
             const btn = document.getElementById('fsBtn');
-            btn.innerText = document.fullscreenElement ? 'Exit Fullscreen (Esc)' : '⛶ Fullscreen';
+            btn.innerText = document.fullscreenElement ? 'Exit Fullscreen' : '⛶ Fullscreen';
         });
 
         function escapeHeading(str) {
