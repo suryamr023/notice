@@ -126,7 +126,7 @@
         .unhide-btn { background: #16a34a; }
         .delete-btn { background: #dc2626; }
         .restore-btn { background: #16a34a; }
-        .disabled-action { opacity: 0.5; cursor: not-allowed !important; }
+        .disabled-action { opacity: 0.4; cursor: not-allowed !important; pointer-events: none; }
 
         .badge { padding: 2px 6px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
         .badge-visible { background: #16a34a; }
@@ -138,14 +138,14 @@
         .empty-state { text-align: center; padding: 25px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.9rem; }
         .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; }
 
-        .site-footer { text-align: center; padding: 20px 0 10px 0; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px; }
+        .site-footer { text-align: center; padding: 20px 0 10px 0; font-size: 0.80rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>🔐 Author Login</h2>
+            <h2>🔐 Portal Login</h2>
             <div id="loginError" class="login-error">Invalid username or password</div>
             <div class="form-group">
                 <label>Username</label>
@@ -155,7 +155,7 @@
                 <label>Password</label>
                 <input type="password" id="loginPass" placeholder="Enter password">
             </div>
-            <button class="btn-primary" style="width: 100%; margin-top: 5px;" onclick="window.handleLogin()">Login to Portal</button>
+            <button class="btn-primary" style="width: 100%; margin-top: 5px;" onclick="window.handleLogin()">Login</button>
         </div>
     </div>
 
@@ -166,7 +166,7 @@
                 <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
             </div>
             <div class="user-info">
-                👤 <span id="currentUserName"></span>
+                👤 <span id="currentUserName"></span> (<span id="currentUserRoleText" style="text-transform:capitalize; color:#64748b;"></span>)
                 <button class="logout-btn" onclick="window.handleLogout()">Logout</button>
             </div>
         </div>
@@ -190,7 +190,7 @@
             </div>
 
             <div class="form-row">
-                <div class="form-group" style="grid-column: span 1;">
+                <div class="form-group">
                     <label for="noticeImage">Attach Image (Optional)</label>
                     <input type="file" id="noticeImage" accept="image/*">
                 </div>
@@ -199,10 +199,10 @@
             <div class="form-group" style="margin-top: 10px;">
                 <label>Content</label>
                 <div class="editor-toolbar">
-                    <button type="button" id="btn-bold" onclick="window.formatDoc('bold')" title="Bold"><b>B</b></button>
-                    <button type="button" id="btn-italic" onclick="window.formatDoc('italic')" title="Italic"><i>I</i></button>
-                    <button type="button" id="btn-underline" onclick="window.formatDoc('underline')" title="Underline"><u>U</u></button>
-                    <button type="button" id="btn-strikeThrough" onclick="window.formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                    <button type="button" onclick="window.formatDoc('bold')" title="Bold"><b>B</b></button>
+                    <button type="button" onclick="window.formatDoc('italic')" title="Italic"><i>I</i></button>
+                    <button type="button" onclick="window.formatDoc('underline')" title="Underline"><u>U</u></button>
+                    <button type="button" onclick="window.formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
                     <select id="select-fontName" onchange="window.formatDoc('fontName', this.value)">
                         <option value="">Font</option>
                         <option value="Calibri">Calibri</option>
@@ -283,11 +283,12 @@
         window.onload = function() {
             checkAuthSession();
 
-            // Sync Users from Firebase Cloud Database
             onValue(ref(db, 'users'), (snapshot) => {
                 const data = snapshot.val();
                 if (!data) {
-                    const defaultUsers = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
+                    const defaultUsers = { 
+                        "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } 
+                    };
                     set(ref(db, 'users'), defaultUsers);
                 } else {
                     globalUsers = data;
@@ -318,6 +319,7 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 errDiv.style.display = 'none';
                 checkAuthSession();
+                renderAdminTables();
             } else {
                 errDiv.style.display = 'block';
             }
@@ -335,11 +337,21 @@
             } else {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentUserName').innerText = currentUser.name;
+                document.getElementById('currentUserRoleText').innerText = currentUser.role;
+                
                 const manageLink = document.getElementById('manageUsersLink');
+                // Only 'admin' role can see account creation / user management
                 if (currentUser.role === 'admin') {
                     manageLink.style.display = 'inline-block';
                 } else {
                     manageLink.style.display = 'none';
+                }
+
+                const trashMsg = document.getElementById('trashPermissionMsg');
+                if (currentUser.role === 'user') {
+                    trashMsg.innerText = "Notice: 'User' role can view recycle bin items, but only Managers and Admins can purge or restore them.";
+                } else {
+                    trashMsg.innerText = "";
                 }
             }
         }
@@ -430,6 +442,7 @@
         }
 
         window.restoreFromTrash = function(index) {
+            if (currentUser.role === 'user') { alert("Permission Denied: 'User' role cannot restore items."); return; }
             let trash = [...globalTrash];
             let notices = [...globalNotices];
             const item = trash[index];
@@ -441,8 +454,8 @@
         }
 
         window.permanentDelete = function(index) {
-            if (currentUser.role !== 'admin') { alert("Permission Denied!"); return; }
-            if (confirm('Delete permanently?')) {
+            if (currentUser.role === 'user') { alert("Permission Denied: 'User' role cannot purge items."); return; }
+            if (confirm('Permanently delete this item?')) {
                 let trash = [...globalTrash];
                 trash.splice(index, 1);
                 set(ref(db, 'trash'), trash);
@@ -450,8 +463,10 @@
         }
 
         function renderAdminTables() {
+            const isUserRole = currentUser && currentUser.role === 'user';
             const container = document.getElementById('noticeListContainer');
             container.innerHTML = globalNotices.length === 0 ? `<div class="empty-state">📭 No active notices found.</div>` : '';
+            
             globalNotices.forEach((notice, index) => {
                 const isHidden = notice.hidden === true;
                 container.innerHTML += `
@@ -463,6 +478,7 @@
                                 <div class="notice-meta-tags">
                                     <span class="badge priority-${notice.priority || 'normal'}">${notice.priority || 'normal'}</span>
                                     <span class="badge ${isHidden ? 'badge-hidden' : 'badge-visible'}">${isHidden ? 'Hidden' : 'Visible'}</span>
+                                    <span>By: ${escapeHTML(notice.addedBy || '')}</span>
                                 </div>
                             </div>
                         </div>
@@ -476,18 +492,19 @@
 
             const trashContainer = document.getElementById('trashListContainer');
             trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>` : '';
+            
             globalTrash.forEach((item, index) => {
                 trashContainer.innerHTML += `
                     <div class="notice-item-card" style="background:#fff;">
                         <div class="notice-item-left">
                             <div class="notice-item-info">
                                 <h4>${escapeHTML(item.heading)}</h4>
-                                <div class="notice-meta-tags"><span>By: ${escapeHTML(item.deletedBy || '')}</span></div>
+                                <div class="notice-meta-tags"><span>Deleted by: ${escapeHTML(item.deletedBy || '')}</span></div>
                             </div>
                         </div>
                         <div class="action-btns">
-                            <button class="restore-btn" onclick="window.restoreFromTrash(${index})">Restore</button>
-                            <button class="delete-btn" onclick="window.permanentDelete(${index})">Purge</button>
+                            <button class="restore-btn ${isUserRole ? 'disabled-action' : ''}" onclick="window.restoreFromTrash(${index})">Restore</button>
+                            <button class="delete-btn ${isUserRole ? 'disabled-action' : ''}" onclick="window.permanentDelete(${index})">Purge</button>
                         </div>
                     </div>`;
             });
