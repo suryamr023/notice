@@ -222,14 +222,14 @@
         let autoScrollInterval = null;
         let progressWidth = 0;
         let globalNotices = [];
-        let isInitialLoad = true;
+        let isFirstRender = true;
 
         onValue(ref(db, 'notices'), (snapshot) => {
             const data = snapshot.val();
             globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
             
-            if (isInitialLoad) {
-                isInitialLoad = false;
+            if (isFirstRender) {
+                isFirstRender = false;
                 renderCurrentNotice();
             }
         });
@@ -262,7 +262,6 @@
                         <div style="font-size:2.5rem; margin-bottom:10px;">📭</div>
                         <h2>No Active Notices</h2>
                     </div>`;
-                // Check again in 3 seconds if notices are added
                 slideTimeout = setTimeout(renderCurrentNotice, 3000);
                 return;
             }
