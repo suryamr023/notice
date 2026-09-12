@@ -25,6 +25,14 @@
             padding: 0 20px;
             background: var(--bg);
             color: var(--text-main);
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1;
         }
 
         /* Login Overlay Modal */
@@ -269,7 +277,6 @@
         .badge-visible { background: #16a34a; }
         .badge-hidden { background: #d97706; }
         
-        /* Importance Badges */
         .priority-normal { background: #64748b; }
         .priority-important { background: #d97706; }
         .priority-urgent { background: #dc2626; }
@@ -285,6 +292,17 @@
         }
 
         .recycle-bin-section { background: #fff5f5; padding: 25px; border: 1px dashed #fca5a5; border-radius: 16px; margin-top: 40px; }
+
+        /* Unified Footer */
+        .site-footer {
+            text-align: center;
+            padding: 25px 0 10px 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
     </style>
 </head>
 <body>
@@ -306,118 +324,119 @@
         </div>
     </div>
 
-    <!-- TOP NAVIGATION & USER STATUS BAR -->
-    <div class="top-bar">
-        <div>
-            <a href="display.html" target="_blank" class="nav-link">🔗 Open Public Board</a>
-            <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
-        </div>
-        <div class="user-info">
-            👤 <span id="currentUserName" style="font-weight:800;"></span> (<span id="currentUserRole" style="text-transform:capitalize; color:#64748b;"></span>)
-            <button class="logout-btn" onclick="handleLogout()">Logout</button>
-        </div>
-    </div>
-
-    <!-- NOTICE CREATION / EDITING FORM -->
-    <div class="form-card" id="formCardContainer">
-        <h1 id="formTitle">Add New Notice</h1>
-        
-        <div class="form-row">
-            <div class="form-group" style="margin-bottom:0;">
-                <label for="noticeHeading">Heading</label>
-                <input type="text" id="noticeHeading" placeholder="Enter notice heading...">
+    <div class="main-content-wrapper">
+        <!-- TOP NAVIGATION & USER STATUS BAR -->
+        <div class="top-bar">
+            <div>
+                <a href="display.html" target="_blank" class="nav-link">🔗 Open Public Board</a>
+                <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
             </div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label for="noticePriority">Importance / Priority Level</label>
-                <select id="noticePriority">
-                    <option value="normal">Standard / Normal</option>
-                    <option value="important">Important (Highlighted)</option>
-                    <option value="urgent">Urgent / Flash Notice (Critical)</option>
-                </select>
+            <div class="user-info">
+                👤 <span id="currentUserName" style="font-weight:800;"></span> (<span id="currentUserRole" style="text-transform:capitalize; color:#64748b;"></span>)
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
             </div>
         </div>
 
-        <div class="form-row" style="margin-top: 15px;">
-            <div class="form-group" style="margin-bottom:0; grid-column: span 2;">
-                <label for="noticeImage">Attach Image (Optional)</label>
-                <input type="file" id="noticeImage" accept="image/*">
-            </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 15px;">
-            <label>Content</label>
-            <div class="editor-toolbar">
-                <!-- Text Styling -->
-                <button type="button" id="btn-bold" onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
-                <button type="button" id="btn-italic" onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
-                <button type="button" id="btn-underline" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
-                <button type="button" id="btn-strikeThrough" onclick="formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
-
-                <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                <!-- Excel-Style Font Family Dropdown -->
-                <select id="select-fontName" onchange="formatDoc('fontName', this.value)" title="Spreadsheet Font">
-                    <option value="">Font Family</option>
-                    <option value="Calibri">Calibri (Excel Default)</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Segoe UI">Segoe UI</option>
-                    <option value="Verdana">Verdana</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                    <option value="Consolas">Consolas (Mono)</option>
-                </select>
-
-                <!-- Font Sizes -->
-                <select id="select-fontSize" onchange="formatDoc('fontSize', this.value)" title="Font Size">
-                    <option value="">Size</option>
-                    <option value="2">10pt</option>
-                    <option value="3">12pt (Normal)</option>
-                    <option value="4">14pt</option>
-                    <option value="5">18pt</option>
-                    <option value="6">24pt</option>
-                    <option value="7">32pt</option>
-                </select>
-
-                <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                <!-- Excel Text Color Swatches with Active State Highlighting -->
-                <span style="font-size: 11px; font-weight: 700; color: #475569;">Text Color:</span>
-                <div class="color-palette" title="Text Color">
-                    <span class="color-dot active-color" style="background:#1e293b;" onclick="setTextColor('#1e293b', this)" title="Dark Slate"></span>
-                    <span class="color-dot" style="background:#dc2626;" onclick="setTextColor('#dc2626', this)" title="Red"></span>
-                    <span class="color-dot" style="background:#16a34a;" onclick="setTextColor('#16a34a', this)" title="Green"></span>
-                    <span class="color-dot" style="background:#2563eb;" onclick="setTextColor('#2563eb', this)" title="Blue"></span>
+        <!-- NOTICE CREATION / EDITING FORM -->
+        <div class="form-card" id="formCardContainer">
+            <h1 id="formTitle">Add New Notice</h1>
+            
+            <div class="form-row">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="noticeHeading">Heading</label>
+                    <input type="text" id="noticeHeading" placeholder="Enter notice heading...">
                 </div>
-
-                <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                <!-- Alignment -->
-                <button type="button" id="btn-justifyLeft" onclick="formatDoc('justifyLeft')" title="Align Left">≡</button>
-                <button type="button" id="btn-justifyCenter" onclick="formatDoc('justifyCenter')" title="Align Center">☰</button>
-                <button type="button" id="btn-justifyRight" onclick="formatDoc('justifyRight')" title="Align Right">≡</button>
-
-                <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
-
-                <!-- Lists & Clear -->
-                <button type="button" id="btn-insertUnorderedList" onclick="formatDoc('insertUnorderedList')" title="Bullet List">• List</button>
-                <button type="button" onclick="formatDoc('removeFormat')" title="Clear Formatting">🧹 Clear</button>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="noticePriority">Importance / Priority Level</label>
+                    <select id="noticePriority">
+                        <option value="normal">Standard / Normal</option>
+                        <option value="important">Important (Highlighted)</option>
+                        <option value="urgent">Urgent / Flash Notice (Critical)</option>
+                    </select>
+                </div>
             </div>
-            <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste your notice contents here..."></div>
+
+            <div class="form-row" style="margin-top: 15px;">
+                <div class="form-group" style="margin-bottom:0; grid-column: span 2;">
+                    <label for="noticeImage">Attach Image (Optional)</label>
+                    <input type="file" id="noticeImage" accept="image/*">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Content</label>
+                <div class="editor-toolbar">
+                    <button type="button" id="btn-bold" onclick="formatDoc('bold')" title="Bold"><b>B</b></button>
+                    <button type="button" id="btn-italic" onclick="formatDoc('italic')" title="Italic"><i>I</i></button>
+                    <button type="button" id="btn-underline" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
+                    <button type="button" id="btn-strikeThrough" onclick="formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
+
+                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
+
+                    <select id="select-fontName" onchange="formatDoc('fontName', this.value)" title="Spreadsheet Font">
+                        <option value="">Font Family</option>
+                        <option value="Calibri">Calibri (Excel Default)</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Segoe UI">Segoe UI</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Consolas">Consolas (Mono)</option>
+                    </select>
+
+                    <select id="select-fontSize" onchange="formatDoc('fontSize', this.value)" title="Font Size">
+                        <option value="">Size</option>
+                        <option value="2">10pt</option>
+                        <option value="3">12pt (Normal)</option>
+                        <option value="4">14pt</option>
+                        <option value="5">18pt</option>
+                        <option value="6">24pt</option>
+                        <option value="7">32pt</option>
+                    </select>
+
+                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
+
+                    <span style="font-size: 11px; font-weight: 700; color: #475569;">Text Color:</span>
+                    <div class="color-palette" title="Text Color">
+                        <span class="color-dot active-color" style="background:#1e293b;" onclick="setTextColor('#1e293b', this)" title="Dark Slate"></span>
+                        <span class="color-dot" style="background:#dc2626;" onclick="setTextColor('#dc2626', this)" title="Red"></span>
+                        <span class="color-dot" style="background:#16a34a;" onclick="setTextColor('#16a34a', this)" title="Green"></span>
+                        <span class="color-dot" style="background:#2563eb;" onclick="setTextColor('#2563eb', this)" title="Blue"></span>
+                    </div>
+
+                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
+
+                    <button type="button" id="btn-justifyLeft" onclick="formatDoc('justifyLeft')" title="Align Left">≡</button>
+                    <button type="button" id="btn-justifyCenter" onclick="formatDoc('justifyCenter')" title="Align Center">☰</button>
+                    <button type="button" id="btn-justifyRight" onclick="formatDoc('justifyRight')" title="Align Right">≡</button>
+
+                    <span style="border-left: 1px solid var(--border); height: 20px; margin: 0 2px;"></span>
+
+                    <button type="button" id="btn-insertUnorderedList" onclick="formatDoc('insertUnorderedList')" title="Bullet List">• List</button>
+                    <button type="button" onclick="formatDoc('removeFormat')" title="Clear Formatting">🧹 Clear</button>
+                </div>
+                <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste your notice contents here..."></div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <button id="submitBtn" class="btn-primary" onclick="saveNotice()">Add Notice</button>
+                <button id="cancelBtn" class="btn-primary cancel-btn" onclick="resetForm()">Cancel Edit</button>
+            </div>
         </div>
-        
-        <div style="margin-top: 15px;">
-            <button id="submitBtn" class="btn-primary" onclick="saveNotice()">Add Notice</button>
-            <button id="cancelBtn" class="btn-primary cancel-btn" onclick="resetForm()">Cancel Edit</button>
+
+        <h2>Active & Hidden Notices</h2>
+        <div class="notice-list-container" id="noticeListContainer"></div>
+
+        <div class="recycle-bin-section">
+            <h2 style="color: #b91c1c;">🗑️ Recycle Bin</h2>
+            <p style="font-size: 13px; color: #b91c1c; margin-bottom: 12px;" id="trashPermissionMsg"></p>
+            <div class="notice-list-container" id="trashListContainer" style="margin-bottom:0;"></div>
         </div>
     </div>
 
-    <h2>Active & Hidden Notices</h2>
-    <div class="notice-list-container" id="noticeListContainer"></div>
-
-    <div class="recycle-bin-section">
-        <h2 style="color: #b91c1c;">🗑️ Recycle Bin</h2>
-        <p style="font-size: 13px; color: #b91c1c; margin-bottom: 12px;" id="trashPermissionMsg"></p>
-        <div class="notice-list-container" id="trashListContainer" style="margin-bottom:0;"></div>
-    </div>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        © 2026 Surya M R. All rights reserved.
+    </footer>
 
     <script>
         let savedSelection = null;
@@ -597,7 +616,6 @@
                 });
             }
 
-            // Trash list with Deletion Tracking
             const trash = getTrash();
             const trashContainer = document.getElementById('trashListContainer');
             trashContainer.innerHTML = '';
