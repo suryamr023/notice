@@ -58,7 +58,9 @@
         .logout-btn { background: #64748b; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; }
 
         h1, h2 { color: var(--text-main); margin-bottom: 12px; font-weight: 800; font-size: 1.25rem; }
-        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; margin-right: 12px; display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; }
+        .nav-links-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; }
+        .nav-link:hover { text-decoration: underline; }
 
         .form-card {
             background: var(--card-bg); padding: 16px; border-radius: 14px;
@@ -159,9 +161,9 @@
 
     <div class="main-content-wrapper">
         <div class="top-bar">
-            <div>
+            <div class="nav-links-group">
                 <a href="display.html" target="_blank" class="nav-link">🔗 Public Board</a>
-                <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Users</a>
+                <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
             </div>
             <div class="user-info">
                 👤 <span id="currentUserName"></span>
@@ -257,8 +259,7 @@
             projectId: "notes-b78bf",
             storageBucket: "notes-b78bf.firebasestorage.app",
             messagingSenderId: "19853194702",
-            appId: "1:19853194702:web:9603d20b0e6ec91684e79f",
-            measurementId: "G-TC8WNNDX1K"
+            appId: "1:19853194702:web:9603d20b0e6ec91684e79f"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -330,7 +331,6 @@
             } else {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentUserName').innerText = currentUser.name;
-                document.getElementById('currentUserRole').innerText = currentUser.role;
                 const manageLink = document.getElementById('manageUsersLink');
                 if (currentUser.role === 'admin') manageLink.style.display = 'inline-block';
             }
