@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Manage Portal Users</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -22,7 +22,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 12px;
             background: var(--bg);
             color: var(--text-main);
             min-height: 100vh;
@@ -31,102 +31,83 @@
             justify-content: space-between;
         }
 
-        .main-content-wrapper { flex-grow: 1; }
+        .main-content-wrapper { flex-grow: 1; width: 100%; }
 
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-            border: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; background: #ffffff; padding: 14px 16px;
+            border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
         }
-        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-        .nav-link:hover { text-decoration: underline; }
+        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.85rem; }
 
         .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
         }
 
-        h1, h2 { color: var(--text-main); font-weight: 800; }
+        h1, h2 { color: var(--text-main); font-weight: 800; font-size: 1.25rem; }
 
         .btn-primary { 
             background: var(--primary); color: white; border: none; 
-            padding: 12px 20px; border-radius: 8px; cursor: pointer; 
-            font-weight: 700; font-size: 14px; transition: background 0.2s;
-            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 14px; width: 100%;
         }
-        .btn-primary:hover { background: var(--primary-hover); }
+        @media (min-width: 640px) { .btn-primary { width: auto; } }
 
         #userModal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
         }
 
         .modal-content {
-            background: #ffffff; width: 100%; max-width: 500px;
-            padding: 25px; border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); border: 1px solid var(--border);
+            background: #ffffff; width: 100%; max-width: 450px;
+            padding: 22px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            max-height: 90vh; overflow-y: auto;
         }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .close-modal { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
 
-        .form-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.88rem; color: #475569; }
-        input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #f8fafc; }
-        input:focus, select:focus { outline: 2px solid var(--primary); background: #fff; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.85rem; color: #475569; }
+        input[type="text"], input[type="password"], select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc; }
 
-        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
-        .btn-secondary { background: #64748b; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; flex: 1; }
+        .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+        .btn-secondary { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; flex: 1; }
 
         .users-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
+        @media (min-width: 640px) { .users-list { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
 
         .user-card {
-            background: #ffffff; border-radius: 14px; padding: 20px;
-            border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-            display: flex; flex-direction: column; justify-content: space-between;
+            background: #ffffff; border-radius: 12px; padding: 16px;
+            border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
         }
 
-        .user-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .user-card h3 { font-size: 1.1rem; color: var(--text-main); font-weight: 800; }
-        .user-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 6px; }
+        .user-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .user-card h3 { font-size: 1.05rem; font-weight: 800; word-break: break-word; }
+        .user-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
 
-        .badge { padding: 4px 10px; font-size: 10px; font-weight: 800; border-radius: 6px; color: white; text-transform: uppercase; }
+        .badge { padding: 3px 8px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
         .badge-admin { background: #6366f1; }
         .badge-publisher { background: #0284c7; }
 
-        .user-card-actions { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: flex; gap: 8px; }
-        .action-btn { padding: 8px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; flex: 1; }
+        .user-card-actions { border-top: 1px solid var(--border); padding-top: 10px; display: flex; gap: 8px; }
+        .action-btn { padding: 6px 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
         .edit-btn { background: #e0f2fe; color: #0369a1; }
         .delete-btn { background: #fee2e2; color: #b91c1c; }
 
-        #accessDenied { display: none; text-align: center; padding: 80px 20px; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        #accessDenied { display: none; text-align: center; padding: 50px 15px; background: white; border-radius: 14px; }
 
         .site-footer {
-            text-align: center; padding: 25px 0 15px 0; font-size: 0.85rem;
-            color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 40px;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .top-bar { flex-direction: column; align-items: flex-start; }
-            .header-section { flex-direction: column; align-items: stretch; }
+            text-align: center; padding: 20px 0 10px 0; font-size: 0.8rem;
+            color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px;
         }
     </style>
 </head>
@@ -134,16 +115,15 @@
 
     <div class="main-content-wrapper">
         <div class="top-bar">
-            <a href="https://suryamr023.github.io/notice/" class="nav-link">⬅ Back to Notice Management</a>
-            <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;"></span>
+            <a href="https://suryamr023.github.io/notice/" class="nav-link">⬅ Back to Dashboard</a>
+            <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem;"></span>
         </div>
 
         <div id="mainContent">
             <div class="header-section">
-                <h2>👥 Active Portal Accounts</h2>
-                <button class="btn-primary" onclick="window.openAddModal()">+ Add New User</button>
+                <h2>👥 Portal Accounts</h2>
+                <button class="btn-primary" onclick="window.openAddModal()">+ New User</button>
             </div>
-
             <div class="users-list" id="usersGridContainer"></div>
         </div>
 
@@ -153,38 +133,35 @@
                     <h2 id="modalTitle">Create New User</h2>
                     <button class="close-modal" onclick="window.closeModal()">✕</button>
                 </div>
-                
                 <div class="form-group">
-                    <label for="newUsername">Username (Login ID)</label>
-                    <input type="text" id="newUsername" placeholder="e.g. alex_admin">
+                    <label>Username (Login ID)</label>
+                    <input type="text" id="newUsername" placeholder="e.g. alex">
                 </div>
                 <div class="form-group">
-                    <label for="newFullName">Full Name / Department</label>
-                    <input type="text" id="newFullName" placeholder="e.g. Alex (Maintenance)">
+                    <label>Full Name / Department</label>
+                    <input type="text" id="newFullName" placeholder="e.g. Alex (IT)">
                 </div>
                 <div class="form-group">
-                    <label for="newPassword">Password</label>
-                    <input type="text" id="newPassword" placeholder="Enter secure password">
+                    <label>Password</label>
+                    <input type="text" id="newPassword" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <label for="newRole">Role Permission</label>
+                    <label>Role</label>
                     <select id="newRole">
                         <option value="publisher">Publisher</option>
                         <option value="admin">Master Admin</option>
                     </select>
                 </div>
-
                 <div class="modal-actions">
                     <button class="btn-secondary" onclick="window.closeModal()">Cancel</button>
-                    <button class="btn-primary" id="submitUserBtn" onclick="window.saveUserAccount()">Create Account</button>
+                    <button class="btn-primary" id="submitUserBtn" onclick="window.saveUserAccount()">Save</button>
                 </div>
             </div>
         </div>
 
-        <div id="accessDenied" style="display:none;" class="card">
-            <h2 style="color: #dc2626; margin-bottom: 10px;">⛔ Access Denied</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Only Master Administrator can manage accounts.</p>
-            <a href="https://suryamr023.github.io/notice/" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:10px 25px;">Return</a>
+        <div id="accessDenied" style="display:none;">
+            <h2 style="color: #dc2626; margin-bottom: 8px;">⛔ Access Denied</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Master Admin access required.</p>
         </div>
     </div>
 
@@ -192,7 +169,6 @@
         © 2026 Surya M R. All rights reserved.
     </footer>
 
-    <!-- Firebase Realtime Database SDK Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -204,8 +180,7 @@
             projectId: "notes-b78bf",
             storageBucket: "notes-b78bf.firebasestorage.app",
             messagingSenderId: "19853194702",
-            appId: "1:19853194702:web:9603d20b0e6ec91684e79f",
-            measurementId: "G-TC8WNNDX1K"
+            appId: "1:19853194702:web:9603d20b0e6ec91684e79f"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -217,21 +192,14 @@
 
         window.onload = function() {
             if (!currentUser || currentUser.role !== 'admin') {
-                const mainContent = document.getElementById('mainContent');
-                const accessDenied = document.getElementById('accessDenied');
-                if (mainContent) mainContent.style.display = 'none';
-                if (accessDenied) accessDenied.style.display = 'block';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('accessDenied').style.display = 'block';
             } else {
-                const loggedInAs = document.getElementById('loggedInAs');
-                if (loggedInAs) loggedInAs.innerText = `Logged in: ${currentUser.name}`;
-
-                // Sync users from Firebase Cloud Database
+                document.getElementById('loggedInAs').innerText = `Logged in: ${currentUser.name}`;
                 onValue(ref(db, 'users'), (snapshot) => {
                     const data = snapshot.val();
                     if (!data) {
-                        // Initialize default Master Admin if database is empty
-                        const defaultUsers = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
-                        set(ref(db, 'users'), defaultUsers);
+                        set(ref(db, 'users'), { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } });
                     } else {
                         globalUsers = data;
                         renderUsersGrid();
@@ -244,38 +212,33 @@
             const container = document.getElementById('usersGridContainer');
             if (!container) return;
             container.innerHTML = '';
-
             for (let username in globalUsers) {
                 const user = globalUsers[username];
-                const card = document.createElement('div');
-                card.className = 'user-card';
-                
-                let actionsHTML = `<button class="action-btn edit-btn" onclick="window.editUser('${username}')">Edit</button>`;
+                let actions = `<button class="action-btn edit-btn" onclick="window.editUser('${username}')">Edit</button>`;
                 if (username !== 'surya') {
-                    actionsHTML += `<button class="action-btn delete-btn" onclick="window.deleteUser('${username}')">Delete</button>`;
+                    actions += `<button class="action-btn delete-btn" onclick="window.deleteUser('${username}')">Del</button>`;
                 } else {
-                    actionsHTML += `<span style="color:#94a3b8; font-size:11px; padding:6px; text-align:center; flex:1;">Protected</span>`;
+                    actions += `<span style="font-size:10px; color:#94a3b8; text-align:center; flex:1; padding:4px;">Protected</span>`;
                 }
-
-                card.innerHTML = `
-                    <div>
-                        <div class="user-card-header">
-                            <h3>${escapeHTML(username)}</h3>
-                            <span class="badge badge-${escapeHTML(user.role)}">${escapeHTML(user.role)}</span>
+                container.innerHTML += `
+                    <div class="user-card">
+                        <div>
+                            <div class="user-card-header">
+                                <h3>${escapeHTML(username)}</h3>
+                                <span class="badge badge-${escapeHTML(user.role)}">${escapeHTML(user.role)}</span>
+                            </div>
+                            <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
+                            <p><strong>Pass:</strong> <code>${escapeHTML(user.pass)}</code></p>
                         </div>
-                        <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
-                        <p><strong>Password:</strong> <code>${escapeHTML(user.pass)}</code></p>
-                    </div>
-                    <div class="user-card-actions">${actionsHTML}</div>
-                `;
-                container.appendChild(card);
+                        <div class="user-card-actions">${actions}</div>
+                    </div>`;
             }
         }
 
         window.openAddModal = function() {
             editingUsername = null;
-            document.getElementById('modalTitle').innerText = '👥 Create New User';
-            document.getElementById('submitUserBtn').innerText = 'Create Account';
+            document.getElementById('modalTitle').innerText = 'Create New User';
+            document.getElementById('submitUserBtn').innerText = 'Create';
             document.getElementById('newUsername').value = '';
             document.getElementById('newFullName').value = '';
             document.getElementById('newPassword').value = '';
@@ -283,9 +246,7 @@
             document.getElementById('userModal').style.display = 'flex';
         }
 
-        window.closeModal = function() {
-            document.getElementById('userModal').style.display = 'none';
-        }
+        window.closeModal = function() { document.getElementById('userModal').style.display = 'none'; }
 
         window.saveUserAccount = function() {
             const uname = document.getElementById('newUsername').value.trim().toLowerCase();
@@ -293,42 +254,29 @@
             const pass = document.getElementById('newPassword').value.trim();
             const role = document.getElementById('newRole').value;
 
-            if (!uname || !fullName || !pass) { alert("Please fill out all fields."); return; }
-
+            if (!uname || !fullName || !pass) { alert("Fill all fields."); return; }
             let users = { ...globalUsers };
-
-            if (editingUsername === null) {
-                if (users[uname]) { alert("Username already exists!"); return; }
-                users[uname] = { pass: pass, role: role, name: fullName };
-            } else {
-                if (uname !== editingUsername && users[uname]) { alert("Username already exists!"); return; }
-                if (uname !== editingUsername) delete users[editingUsername];
-                users[uname] = { pass: pass, role: role, name: fullName };
-            }
-
-            set(ref(db, 'users'), users).then(() => {
-                window.closeModal();
-            }).catch((err) => {
-                alert("Error saving user: " + err.message);
-            });
+            if (editingUsername === null && users[uname]) { alert("Username exists!"); return; }
+            if (editingUsername !== null && uname !== editingUsername) delete users[editingUsername];
+            users[uname] = { pass, role, name: fullName };
+            set(ref(db, 'users'), users).then(() => window.closeModal());
         }
 
         window.editUser = function(username) {
             const user = globalUsers[username];
-            if (!user) return;
             document.getElementById('newUsername').value = username;
             document.getElementById('newFullName').value = user.name;
             document.getElementById('newPassword').value = user.pass;
             document.getElementById('newRole').value = user.role;
             editingUsername = username;
-            document.getElementById('modalTitle').innerText = `✏️ Edit User`;
-            document.getElementById('submitUserBtn').innerText = 'Update Account';
+            document.getElementById('modalTitle').innerText = 'Edit User';
+            document.getElementById('submitUserBtn').innerText = 'Update';
             document.getElementById('userModal').style.display = 'flex';
         }
 
         window.deleteUser = function(username) {
-            if (username === 'surya') { alert("Cannot delete Master Admin!"); return; }
-            if (confirm(`Delete login ID '${username}'?`)) {
+            if (username === 'surya') return;
+            if (confirm(`Delete user '${username}'?`)) {
                 let users = { ...globalUsers };
                 delete users[username];
                 set(ref(db, 'users'), users);
@@ -336,7 +284,7 @@
         }
 
         function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+            return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
     </script>
 </body>
