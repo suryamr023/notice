@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Portal Users</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: var(--bg);
+            color: var(--text-main);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: #ffffff;
+            padding: 18px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+        }
+        .nav-link { color: var(--primary); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-link:hover { text-decoration: underline; }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1, h2 { color: var(--text-main); font-weight: 800; }
+
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px; 
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* Modal Pop-up Overlay */
+        #userModal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-modal { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
+        .close-modal:hover { color: var(--text-main); }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.88rem; color: #475569; }
+        input[type="text"], input[type="password"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #f8fafc; }
+        input:focus, select:focus { outline: 2px solid var(--primary); background: #fff; }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .btn-secondary { background: #64748b; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; flex: 1; }
+        .btn-secondary:hover { background: #475569; }
+
+        /* User Cards Grid View */
+        .users-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .user-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .user-card h3 { font-size: 1.15rem; color: var(--text-main); font-weight: 800; }
+        .user-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 6px; }
+
+        .badge { padding: 4px 10px; font-size: 10px; font-weight: 800; border-radius: 6px; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-admin { background: #6366f1; }
+        .badge-publisher { background: #0284c7; }
+
+        .user-card-actions {
+            margin-top: 18px;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn { padding: 8px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; flex: 1; }
+        .edit-btn { background: #e0f2fe; color: #0369a1; }
+        .edit-btn:hover { background: #bae6fd; }
+        .delete-btn { background: #fee2e2; color: #b91c1c; }
+        .delete-btn:hover { background: #fecaca; }
+
+        #accessDenied { display: none; text-align: center; padding: 80px 20px; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="admin.html" class="nav-link">⬅ Back to Notice Management</a>
+        <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted);"></span>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="mainContent">
+        <div class="header-section">
+            <h2>👥 Active Portal Accounts</h2>
+            <button class="btn-primary" onclick="openAddModal()">+ Add New User</button>
+        </div>
+
+        <div class="users-list" id="usersGridContainer"></div>
+    </div>
+
+    <!-- POP-UP MODAL FOR ADDING/EDITING USER -->
+    <div id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New User</h2>
+                <button class="close-modal" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="newUsername">Username (Login ID)</label>
+                <input type="text" id="newUsername" placeholder="e.g. alex_admin">
+            </div>
+            <div class="form-group">
+                <label for="newFullName">Full Name / Department</label>
+                <input type="text" id="newFullName" placeholder="e.g. Alex (Maintenance)">
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Password</label>
+                <input type="text" id="newPassword" placeholder="Enter secure password">
+            </div>
+            <div class="form-group">
+                <label for="newRole">Role Permission</label>
+                <select id="newRole">
+                    <option value="publisher">Publisher (Add/Edit/Hide/Trash)</option>
+                    <option value="admin">Master Admin (Full Portal Access)</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" id="submitUserBtn" onclick="saveUserAccount()">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCESS DENIED OVERLAY -->
+    <div id="accessDenied" style="display:none;" class="card">
+        <h2 style="color: #dc2626; margin-bottom: 10px;">⛔ Access Denied</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Only Master Administrator (Surya) can manage user credentials.</p>
+        <a href="admin.html" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:10px 25px;">Return to Dashboard</a>
+    </div>
+
+    <script>
+        const currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
+        let editingUsername = null;
+
+        window.onload = function() {
+            if (!currentUser || currentUser.role !== 'admin') {
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('accessDenied').style.display = 'block';
+            } else {
+                document.getElementById('loggedInAs').innerText = `Logged in as: ${currentUser.name}`;
+                renderUsersGrid();
+            }
+        }
+
+        function getUsers() {
+            let users = JSON.parse(localStorage.getItem('portalUsers'));
+            if (!users) {
+                users = { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } };
+                localStorage.setItem('portalUsers', JSON.stringify(users));
+            }
+            return users;
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('portalUsers', JSON.stringify(users));
+        }
+
+        function renderUsersGrid() {
+            const users = getUsers();
+            const container = document.getElementById('usersGridContainer');
+            container.innerHTML = '';
+
+            for (let username in users) {
+                const user = users[username];
+                const card = document.createElement('div');
+                card.className = 'user-card';
+                
+                let actionsHTML = `<button class="action-btn edit-btn" onclick="editUser('${username}')">Edit</button>`;
+                if (username !== 'surya') {
+                    actionsHTML += `<button class="action-btn delete-btn" onclick="deleteUser('${username}')">Delete</button>`;
+                } else {
+                    actionsHTML += `<span style="color:#94a3b8; font-size:11px; padding:8px; font-weight:700; text-align:center; flex:1;">Protected</span>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="user-card-header">
+                            <h3>${username}</h3>
+                            <span class="badge badge-${user.role}">${user.role}</span>
+                        </div>
+                        <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
+                        <p><strong>Password:</strong> <code>${user.pass}</code></p>
+                    </div>
+                    <div class="user-card-actions">${actionsHTML}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function openAddModal() {
+            editingUsername = null;
+            document.getElementById('modalTitle').innerText = '👥 Create New User';
+            document.getElementById('submitUserBtn').innerText = 'Create Account';
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newFullName').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newRole').value = 'publisher';
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function saveUserAccount() {
+            const uname = document.getElementById('newUsername').value.trim().toLowerCase();
+            const fullName = document.getElementById('newFullName').value.trim();
+            const pass = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newRole').value;
+
+            if (!uname || !fullName || !pass) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            let users = getUsers();
+
+            if (editingUsername === null) {
+                if (users[uname]) { alert("Username already exists!"); return; }
+                users[uname] = { pass: pass, role: role, name: fullName };
+                alert(`Account '${uname}' created successfully!`);
+            } else {
+                if (uname !== editingUsername && users[uname]) { alert("New username already exists!"); return; }
+                if (uname !== editingUsername) delete users[editingUsername];
+                users[uname] = { pass: pass, role: role, name: fullName };
+                alert(`Account '${uname}' updated successfully!`);
+            }
+
+            saveUsers(users);
+            closeModal();
+            renderUsersGrid();
+        }
+
+        function editUser(username) {
+            const users = getUsers();
+            const user = users[username];
+
+            document.getElementById('newUsername').value = username;
+            document.getElementById('newFullName').value = user.name;
+            document.getElementById('newPassword').value = user.pass;
+            document.getElementById('newRole').value = user.role;
+
+            editingUsername = username;
+            document.getElementById('modalTitle').innerText = `✏️ Edit User: ${username}`;
+            document.getElementById('submitUserBtn').innerText = 'Update Account';
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function deleteUser(username) {
+            if (username === 'surya') { alert("Cannot delete Master Admin!"); return; }
+            if (confirm(`Delete login ID '${username}'?`)) {
+                let users = getUsers();
+                delete users[username];
+                saveUsers(users);
+                renderUsersGrid();
+            }
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+    </script>
+</body>
+</html>
