@@ -25,6 +25,14 @@
             padding: 0 20px;
             background: var(--bg);
             color: var(--text-main);
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1;
         }
 
         .top-bar {
@@ -117,7 +125,6 @@
         .btn-secondary { background: #64748b; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; flex: 1; }
         .btn-secondary:hover { background: #475569; }
 
-        /* User Cards Grid View */
         .users-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -169,66 +176,83 @@
         .delete-btn:hover { background: #fecaca; }
 
         #accessDenied { display: none; text-align: center; padding: 80px 20px; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+        .site-footer {
+            text-align: center;
+            padding: 25px 0 10px 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="admin.html" class="nav-link">⬅ Back to Notice Management</a>
-        <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted);"></span>
-    </div>
-
-    <!-- MAIN PAGE CONTENT -->
-    <div id="mainContent">
-        <div class="header-section">
-            <h2>👥 Active Portal Accounts</h2>
-            <button class="btn-primary" onclick="openAddModal()">+ Add New User</button>
+    <div class="main-content-wrapper">
+        <div class="top-bar">
+            <a href="admin.html" class="nav-link">⬅ Back to Notice Management</a>
+            <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted);"></span>
         </div>
 
-        <div class="users-list" id="usersGridContainer"></div>
-    </div>
-
-    <!-- POP-UP MODAL FOR ADDING/EDITING USER -->
-    <div id="userModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Create New User</h2>
-                <button class="close-modal" onclick="closeModal()">✕</button>
-            </div>
-            
-            <div class="form-group">
-                <label for="newUsername">Username (Login ID)</label>
-                <input type="text" id="newUsername" placeholder="e.g. alex_admin">
-            </div>
-            <div class="form-group">
-                <label for="newFullName">Full Name / Department</label>
-                <input type="text" id="newFullName" placeholder="e.g. Alex (Maintenance)">
-            </div>
-            <div class="form-group">
-                <label for="newPassword">Password</label>
-                <input type="text" id="newPassword" placeholder="Enter secure password">
-            </div>
-            <div class="form-group">
-                <label for="newRole">Role Permission</label>
-                <select id="newRole">
-                    <option value="publisher">Publisher (Add/Edit/Hide/Trash)</option>
-                    <option value="admin">Master Admin (Full Portal Access)</option>
-                </select>
+        <!-- MAIN PAGE CONTENT -->
+        <div id="mainContent">
+            <div class="header-section">
+                <h2>👥 Active Portal Accounts</h2>
+                <button class="btn-primary" onclick="openAddModal()">+ Add New User</button>
             </div>
 
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn-primary" id="submitUserBtn" onclick="saveUserAccount()">Create Account</button>
+            <div class="users-list" id="usersGridContainer"></div>
+        </div>
+
+        <!-- POP-UP MODAL FOR ADDING/EDITING USER -->
+        <div id="userModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Create New User</h2>
+                    <button class="close-modal" onclick="closeModal()">✕</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newUsername">Username (Login ID)</label>
+                    <input type="text" id="newUsername" placeholder="e.g. alex_admin">
+                </div>
+                <div class="form-group">
+                    <label for="newFullName">Full Name / Department</label>
+                    <input type="text" id="newFullName" placeholder="e.g. Alex (Maintenance)">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Password</label>
+                    <input type="text" id="newPassword" placeholder="Enter secure password">
+                </div>
+                <div class="form-group">
+                    <label for="newRole">Role Permission</label>
+                    <select id="newRole">
+                        <option value="publisher">Publisher (Add/Edit/Hide/Trash)</option>
+                        <option value="admin">Master Admin (Full Portal Access)</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn-primary" id="submitUserBtn" onclick="saveUserAccount()">Create Account</button>
+                </div>
             </div>
+        </div>
+
+        <!-- ACCESS DENIED OVERLAY -->
+        <div id="accessDenied" style="display:none;" class="card">
+            <h2 style="color: #dc2626; margin-bottom: 10px;">⛔ Access Denied</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Only Master Administrator (Surya) can manage user credentials.</p>
+            <a href="admin.html" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:10px 25px;">Return to Dashboard</a>
         </div>
     </div>
 
-    <!-- ACCESS DENIED OVERLAY -->
-    <div id="accessDenied" style="display:none;" class="card">
-        <h2 style="color: #dc2626; margin-bottom: 10px;">⛔ Access Denied</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Only Master Administrator (Surya) can manage user credentials.</p>
-        <a href="admin.html" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:10px 25px;">Return to Dashboard</a>
-    </div>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        © 2026 Surya M R. All rights reserved.
+    </footer>
 
     <script>
         const currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
