@@ -96,7 +96,8 @@
 
         .badge { padding: 3px 8px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
         .badge-admin { background: #6366f1; }
-        .badge-publisher { background: #0284c7; }
+        .badge-manager { background: #059669; }
+        .badge-user { background: #0284c7; }
 
         .user-card-actions { border-top: 1px solid var(--border); padding-top: 10px; display: flex; gap: 8px; }
         .action-btn { padding: 6px 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
@@ -148,8 +149,9 @@
                 <div class="form-group">
                     <label>Role</label>
                     <select id="newRole">
-                        <option value="publisher">Publisher</option>
-                        <option value="admin">Master Admin</option>
+                        <option value="user">User (Post, Edit, Hide, Trash)</option>
+                        <option value="manager">Manager (All except login creation)</option>
+                        <option value="admin">Master Admin (Full Access)</option>
                     </select>
                 </div>
                 <div class="modal-actions">
@@ -161,7 +163,7 @@
 
         <div id="accessDenied" style="display:none;">
             <h2 style="color: #dc2626; margin-bottom: 8px;">⛔ Access Denied</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Master Admin access required.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Master Admin access required to manage users.</p>
         </div>
     </div>
 
@@ -225,7 +227,7 @@
                         <div>
                             <div class="user-card-header">
                                 <h3>${escapeHTML(username)}</h3>
-                                <span class="badge badge-${escapeHTML(user.role)}">${escapeHTML(user.role)}</span>
+                                <span class="badge badge-${escapeHTML(user.role || 'user')}">${escapeHTML(user.role || 'user')}</span>
                             </div>
                             <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
                             <p><strong>Pass:</strong> <code>${escapeHTML(user.pass)}</code></p>
@@ -242,7 +244,7 @@
             document.getElementById('newUsername').value = '';
             document.getElementById('newFullName').value = '';
             document.getElementById('newPassword').value = '';
-            document.getElementById('newRole').value = 'publisher';
+            document.getElementById('newRole').value = 'user';
             document.getElementById('userModal').style.display = 'flex';
         }
 
@@ -267,7 +269,7 @@
             document.getElementById('newUsername').value = username;
             document.getElementById('newFullName').value = user.name;
             document.getElementById('newPassword').value = user.pass;
-            document.getElementById('newRole').value = user.role;
+            document.getElementById('newRole').value = user.role || 'user';
             editingUsername = username;
             document.getElementById('modalTitle').innerText = 'Edit User';
             document.getElementById('submitUserBtn').innerText = 'Update';
