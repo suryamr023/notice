@@ -104,13 +104,14 @@
         .notice-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: var(--primary-gradient);
+            z-index: 3;
         }
         .notice-card.priority-important::before { background: var(--important-gradient); }
         .notice-card.priority-urgent::before { background: var(--urgent-gradient); }
 
         .pushpin {
             position: absolute; top: 12px; right: 15px; width: 14px; height: 14px;
-            background: radial-gradient(circle, #fca5a5, #dc2626); border-radius: 50%; z-index: 3;
+            background: radial-gradient(circle, #fca5a5, #dc2626); border-radius: 50%; z-index: 4;
         }
 
         @keyframes badgeBlink {
@@ -127,8 +128,21 @@
         .banner-important { background: #fef3c7; color: #b45309; border: 1px solid #f59e0b; }
         .banner-urgent { background: #fee2e2; color: #b91c1c; border: 1px solid #ef4444; }
 
-        .notice-card img.notice-img {
-            width: 100%; max-height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;
+        /* Smart AI Cover Wrapper for Banners without cropping */
+        .banner-container {
+            width: 100%; height: 130px; border-radius: 8px; margin-bottom: 8px;
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: #0f172a; flex-shrink: 0;
+        }
+        .banner-bg-fill {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            filter: blur(14px) brightness(0.65); transform: scale(1.2); z-index: 1;
+        }
+        .notice-img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            position: relative; z-index: 2; border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .notice-content-area { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -146,7 +160,7 @@
         }
         .notice-body-content::-webkit-scrollbar { width: 3px; }
         .notice-body-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
-        .notice-body-content img { max-width: 100%; height: auto; border-radius: 6px; margin: 6px 0; }
+        .notice-body-content img { max-width: 100%; height: auto; border-radius: 6px; margin: 6px 0; object-fit: contain; }
 
         .notice-body-content table { width: 100% !important; border-collapse: collapse !important; margin: 6px 0 !important; }
         .notice-body-content th, .notice-body-content td { border: 1px solid #cbd5e1 !important; padding: 4px !important; font-size: 0.78rem !important; }
@@ -299,7 +313,11 @@
                 <div class="notice-content-area">
                     ${priority === 'urgent' ? '<div class="priority-banner banner-urgent">🚨 URGENT NOTICE</div>' : ''}
                     ${priority === 'important' ? '<div class="priority-banner banner-important">⚠️ IMPORTANT</div>' : ''}
-                    ${notice.image ? `<img src="${notice.image}" class="notice-img">` : ''}
+                    ${notice.image ? `
+                        <div class="banner-container">
+                            <div class="banner-bg-fill" style="background-image: url('${notice.image}');"></div>
+                            <img src="${notice.image}" class="notice-img">
+                        </div>` : ''}
                     <h3>${escapeHeading(notice.heading || '')}</h3>
                     <div class="notice-body-content" id="slideContent"></div>
                 </div>
