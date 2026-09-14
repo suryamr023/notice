@@ -95,14 +95,18 @@
         .user-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
 
         .badge { padding: 3px 8px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
+        .badge-superadmin { background: #8b5cf6; }
         .badge-admin { background: #6366f1; }
-        .badge-manager { background: #059669; }
+        .badge-moderator { background: #059669; }
         .badge-user { background: #0284c7; }
 
         .user-card-actions { border-top: 1px solid var(--border); padding-top: 10px; display: flex; gap: 8px; }
         .action-btn { padding: 6px 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
         .edit-btn { background: #e0f2fe; color: #0369a1; }
         .delete-btn { background: #fee2e2; color: #b91c1c; }
+        .restore-btn { background: #16a34a; color: #fff; }
+
+        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 35px; }
 
         #accessDenied { display: none; text-align: center; padding: 50px 15px; background: white; border-radius: 14px; }
 
@@ -116,16 +120,21 @@
 
     <div class="main-content-wrapper">
         <div class="top-bar">
-            <a href="https://suryamr023.github.io/notice/" class="nav-link">⬅ Back to Dashboard</a>
+            <a href="admin.html" class="nav-link">⬅ Back to Notice Dashboard</a>
             <span id="loggedInAs" style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem;"></span>
         </div>
 
         <div id="mainContent">
             <div class="header-section">
-                <h2>👥 Portal Accounts</h2>
+                <h2>👥 Active Portal Accounts</h2>
                 <button class="btn-primary" onclick="window.openAddModal()">+ New User</button>
             </div>
             <div class="users-list" id="usersGridContainer"></div>
+
+            <div class="recycle-bin-section">
+                <h2 style="color: #b91c1c; font-size: 1.1rem; margin-bottom: 12px;">🗑️ Deleted Users Recycle Bin</h2>
+                <div class="users-list" id="trashUsersGridContainer"></div>
+            </div>
         </div>
 
         <div id="userModal">
@@ -150,8 +159,8 @@
                     <label>Role</label>
                     <select id="newRole">
                         <option value="user">User (Post, Edit, Hide, Trash)</option>
-                        <option value="manager">Manager (All except login creation)</option>
-                        <option value="admin">Master Admin (Full Access)</option>
+                        <option value="moderator">Moderator (All except login creation)</option>
+                        <option value="admin">Admin (Full Access & Deletable)</option>
                     </select>
                 </div>
                 <div class="modal-actions">
@@ -163,7 +172,7 @@
 
         <div id="accessDenied" style="display:none;">
             <h2 style="color: #dc2626; margin-bottom: 8px;">⛔ Access Denied</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Master Admin access required to manage users.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Admin or Super Admin access required to manage users.</p>
         </div>
     </div>
 
@@ -191,21 +200,31 @@
         const currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
         let editingUsername = null;
         let globalUsers = {};
+        let globalTrashUsers = {};
 
         window.onload = function() {
-            if (!currentUser || currentUser.role !== 'admin') {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'admin')) {
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('accessDenied').style.display = 'block';
             } else {
                 document.getElementById('loggedInAs').innerText = `Logged in: ${currentUser.name}`;
+                
+                // Sync Active Users
                 onValue(ref(db, 'users'), (snapshot) => {
                     const data = snapshot.val();
                     if (!data) {
-                        set(ref(db, 'users'), { "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } });
+                        set(ref(db, 'users'), { "admin": { pass: "admin_s", role: "superadmin", name: "Super Administrator" } });
                     } else {
                         globalUsers = data;
                         renderUsersGrid();
                     }
+                });
+
+                // Sync Deleted Users Recycle Bin
+                onValue(ref(db, 'trashUsers'), (snapshot) => {
+                    const data = snapshot.val();
+                    globalTrashUsers = data || {};
+                    renderTrashUsersGrid();
                 });
             }
         }
@@ -216,8 +235,12 @@
             container.innerHTML = '';
             for (let username in globalUsers) {
                 const user = globalUsers[username];
+                
+                // Hide Super Admin account from everyone except when logged in as superadmin viewing own profile if desired
+                if (username === 'admin' && currentUser.username !== 'admin') continue;
+
                 let actions = `<button class="action-btn edit-btn" onclick="window.editUser('${username}')">Edit</button>`;
-                if (username !== 'surya') {
+                if (username !== 'admin') {
                     actions += `<button class="action-btn delete-btn" onclick="window.deleteUser('${username}')">Del</button>`;
                 } else {
                     actions += `<span style="font-size:10px; color:#94a3b8; text-align:center; flex:1; padding:4px;">Protected</span>`;
@@ -235,6 +258,37 @@
                         <div class="user-card-actions">${actions}</div>
                     </div>`;
             }
+        }
+
+        function renderTrashUsersGrid() {
+            const container = document.getElementById('trashUsersGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const keys = Object.keys(globalTrashUsers);
+            if (keys.length === 0) {
+                container.innerHTML = `<div class="empty-state" style="background:#fff; grid-column: 1/-1;">♻️ Deleted users recycle bin is empty.</div>`;
+                return;
+            }
+
+            keys.forEach(username => {
+                const user = globalTrashUsers[username];
+                container.innerHTML += `
+                    <div class="user-card" style="background:#fff;">
+                        <div>
+                            <div class="user-card-header">
+                                <h3>${escapeHTML(username)}</h3>
+                                <span class="badge badge-${escapeHTML(user.role || 'user')}">${escapeHTML(user.role || 'user')}</span>
+                            </div>
+                            <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
+                            <p><strong>Deleted At:</strong> ${escapeHTML(user.deletedAt || 'N/A')}</p>
+                        </div>
+                        <div class="user-card-actions">
+                            <button class="action-btn restore-btn" onclick="window.restoreUser('${username}')">Restore</button>
+                            <button class="action-btn delete-btn" onclick="window.permanentDeleteUser('${username}')">Purge</button>
+                        </div>
+                    </div>`;
+            });
         }
 
         window.openAddModal = function() {
@@ -257,6 +311,8 @@
             const role = document.getElementById('newRole').value;
 
             if (!uname || !fullName || !pass) { alert("Fill all fields."); return; }
+            if (role === 'superadmin') { alert("Cannot create another Super Admin!"); return; }
+
             let users = { ...globalUsers };
             if (editingUsername === null && users[uname]) { alert("Username exists!"); return; }
             if (editingUsername !== null && uname !== editingUsername) delete users[editingUsername];
@@ -265,6 +321,7 @@
         }
 
         window.editUser = function(username) {
+            if (username === 'admin') { alert("Cannot edit Super Admin account here."); return; }
             const user = globalUsers[username];
             document.getElementById('newUsername').value = username;
             document.getElementById('newFullName').value = user.name;
@@ -277,11 +334,41 @@
         }
 
         window.deleteUser = function(username) {
-            if (username === 'surya') return;
-            if (confirm(`Delete user '${username}'?`)) {
+            if (username === 'admin') return;
+            if (confirm(`Move user '${username}' to Recycle Bin?`)) {
                 let users = { ...globalUsers };
+                let trash = { ...globalTrashUsers };
+                
+                const now = new Date();
+                const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                trash[username] = { ...users[username], deletedAt: timeStr };
                 delete users[username];
+
                 set(ref(db, 'users'), users);
+                set(ref(db, 'trashUsers'), trash);
+            }
+        }
+
+        window.restoreUser = function(username) {
+            let users = { ...globalUsers };
+            let trash = { ...globalTrashUsers };
+
+            const userToRestore = { ...trash[username] };
+            delete userToRestore.deletedAt;
+
+            users[username] = userToRestore;
+            delete trash[username];
+
+            set(ref(db, 'users'), users);
+            set(ref(db, 'trashUsers'), trash);
+        }
+
+        window.permanentDeleteUser = function(username) {
+            if (confirm(`Permanently delete user '${username}'?`)) {
+                let trash = { ...globalTrashUsers };
+                delete trash[username];
+                set(ref(db, 'trashUsers'), trash);
             }
         }
 
