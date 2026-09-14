@@ -132,7 +132,7 @@
             <div class="users-list" id="usersGridContainer"></div>
 
             <div class="recycle-bin-section" id="trashUsersSection">
-                <h2 style="color: #b91c1c; font-size: 1.1rem; margin-bottom: 12px;">🗑️ Deleted Users Recycle Bin (Super Admin Audit Log)</h2>
+                <h2 style="color: #b91c1c; font-size: 1.1rem; margin-bottom: 12px;">🗑️ Recycle Bin</h2>
                 <div class="users-list" id="trashUsersGridContainer"></div>
             </div>
         </div>
@@ -204,7 +204,7 @@
         let globalTrashUsers = {};
 
         window.onload = function() {
-            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'admin')) {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'admin' && currentUser.username !== 'admin')) {
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('accessDenied').style.display = 'block';
             } else {
@@ -273,7 +273,7 @@
             
             const keys = Object.keys(globalTrashUsers);
             if (keys.length === 0) {
-                container.innerHTML = `<div class="empty-state" style="background:#fff; grid-column: 1/-1;">♻️ Deleted users recycle bin is empty.</div>`;
+                container.innerHTML = `<div class="empty-state" style="background:#fff; grid-column: 1/-1;">♻️ Recycle bin is empty.</div>`;
                 return;
             }
 
@@ -361,6 +361,11 @@
         }
 
         window.restoreUser = function(username) {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.username !== 'admin')) {
+                alert("Permission Denied: Only Super Admin can restore deleted users.");
+                return;
+            }
+
             let users = { ...globalUsers };
             let trash = { ...globalTrashUsers };
 
@@ -376,6 +381,11 @@
         }
 
         window.permanentDeleteUser = function(username) {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.username !== 'admin')) {
+                alert("Permission Denied.");
+                return;
+            }
+
             if (confirm(`Permanently delete user '${username}'?`)) {
                 let trash = { ...globalTrashUsers };
                 delete trash[username];
