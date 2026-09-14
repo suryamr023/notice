@@ -106,7 +106,7 @@
         .delete-btn { background: #fee2e2; color: #b91c1c; }
         .restore-btn { background: #16a34a; color: #fff; }
 
-        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 35px; }
+        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 35px; display: none; }
 
         #accessDenied { display: none; text-align: center; padding: 50px 15px; background: white; border-radius: 14px; }
 
@@ -131,8 +131,8 @@
             </div>
             <div class="users-list" id="usersGridContainer"></div>
 
-            <div class="recycle-bin-section">
-                <h2 style="color: #b91c1c; font-size: 1.1rem; margin-bottom: 12px;">🗑️ Deleted Users Recycle Bin</h2>
+            <div class="recycle-bin-section" id="trashUsersSection">
+                <h2 style="color: #b91c1c; font-size: 1.1rem; margin-bottom: 12px;">🗑️ Deleted Users Recycle Bin (Super Admin Audit Log)</h2>
                 <div class="users-list" id="trashUsersGridContainer"></div>
             </div>
         </div>
@@ -161,7 +161,7 @@
                         <option value="user">User (Post, Edit, Hide, Trash)</option>
                         <option value="moderator">Moderator (All except login creation)</option>
                         <option value="admin">Admin (Full Access & Deletable)</option>
-                        <option value="superadmin">Super Admin (Full System Access)</option>
+                        <option value="superadmin" id="superAdminOption" style="display:none;">Super Admin (Full System Access)</option>
                     </select>
                 </div>
                 <div class="modal-actions">
@@ -173,7 +173,7 @@
 
         <div id="accessDenied" style="display:none;">
             <h2 style="color: #dc2626; margin-bottom: 8px;">⛔ Access Denied</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Super Admin access required to manage users.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Admin or Super Admin access required to manage users.</p>
         </div>
     </div>
 
@@ -204,12 +204,19 @@
         let globalTrashUsers = {};
 
         window.onload = function() {
-            if (!currentUser || currentUser.role !== 'superadmin') {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'admin')) {
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('accessDenied').style.display = 'block';
             } else {
                 document.getElementById('loggedInAs').innerText = `Logged in: ${currentUser.name}`;
                 
+                if (currentUser.role === 'superadmin' || currentUser.username === 'admin') {
+                    document.getElementById('superAdminOption').style.display = 'block';
+                    document.getElementById('trashUsersSection').style.display = 'block';
+                } else {
+                    document.getElementById('trashUsersSection').style.display = 'none';
+                }
+
                 onValue(ref(db, 'users'), (snapshot) => {
                     const data = snapshot.val();
                     if (!data) {
@@ -258,6 +265,8 @@
         }
 
         function renderTrashUsersGrid() {
+            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.username !== 'admin')) return;
+            
             const container = document.getElementById('trashUsersGridContainer');
             if (!container) return;
             container.innerHTML = '';
@@ -278,7 +287,8 @@
                                 <span class="badge badge-${escapeHTML(user.role || 'user')}">${escapeHTML(user.role || 'user')}</span>
                             </div>
                             <p><strong>Name:</strong> ${escapeHTML(user.name)}</p>
-                            <p><strong>Deleted At:</strong> ${escapeHTML(user.deletedAt || 'N/A')}</p>
+                            <p style="margin-top: 6px;">🗑️ Deleted by: <strong>${escapeHTML(user.deletedBy || 'Unknown')}</strong></p>
+                            <p>🕒 Time: ${escapeHTML(user.deletedAt || 'N/A')}</p>
                         </div>
                         <div class="user-card-actions">
                             <button class="action-btn restore-btn" onclick="window.restoreUser('${username}')">Restore</button>
@@ -308,6 +318,10 @@
             const role = document.getElementById('newRole').value;
 
             if (!uname || !fullName || !pass) { alert("Fill all fields."); return; }
+            if (role === 'superadmin' && currentUser.role !== 'superadmin' && currentUser.username !== 'admin') {
+                alert("Permission Denied: Only a Super Admin can create another Super Admin account.");
+                return;
+            }
 
             let users = { ...globalUsers };
             if (editingUsername === null && users[uname]) { alert("Username exists!"); return; }
@@ -338,7 +352,7 @@
                 const now = new Date();
                 const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                trash[username] = { ...users[username], deletedAt: timeStr };
+                trash[username] = { ...users[username], deletedAt: timeStr, deletedBy: currentUser.name };
                 delete users[username];
 
                 set(ref(db, 'users'), users);
@@ -352,6 +366,7 @@
 
             const userToRestore = { ...trash[username] };
             delete userToRestore.deletedAt;
+            delete userToRestore.deletedBy;
 
             users[username] = userToRestore;
             delete trash[username];
