@@ -79,12 +79,16 @@
         .image-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
         
         .preview-container {
-            margin-top: 8px; display: none; width: 100%; max-height: 160px;
+            margin-top: 8px; display: none; width: 100%; max-height: 180px;
             border-radius: 8px; border: 1px dashed var(--border); background: #f1f5f9;
-            overflow: hidden; align-items: center; justify-content: center; position: relative;
+            overflow: hidden; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 8px;
         }
         .preview-container img {
-            width: 100%; height: 100%; max-height: 150px; object-fit: contain; border-radius: 6px;
+            width: 100%; max-height: 130px; object-fit: contain; border-radius: 6px;
+        }
+        .pixel-badge {
+            margin-top: 5px; background: #0f172a; color: #fff; font-size: 10px; font-weight: 700;
+            padding: 2px 8px; border-radius: 4px; font-family: 'Fira Code', monospace;
         }
 
         .filter-bar {
@@ -217,6 +221,7 @@
                     <div class="image-hint">📐 Recommended size: <strong>800 × 300 pixels</strong> (Fits without cropping)</div>
                     <div class="preview-container" id="imagePreviewBox">
                         <img id="imagePreview" src="" alt="Banner Preview">
+                        <span class="pixel-badge" id="pixelBadge">0 × 0 px</span>
                     </div>
                 </div>
             </div>
@@ -415,6 +420,7 @@
             const file = e.target.files[0];
             const previewBox = document.getElementById('imagePreviewBox');
             const previewImg = document.getElementById('imagePreview');
+            const pixelBadge = document.getElementById('pixelBadge');
 
             if (file) {
                 const reader = new FileReader();
@@ -422,12 +428,15 @@
                     base64Image = e.target.result;
                     previewImg.src = base64Image;
                     previewBox.style.display = 'flex';
+
+                    // Detect exact pixel dimensions
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
+                    };
+                    tempImg.src = base64Image;
                 };
                 reader.readAsDataURL(file);
-            } else {
-                base64Image = '';
-                previewImg.src = '';
-                previewBox.style.display = 'none';
             }
         });
 
@@ -497,6 +506,8 @@
                     hidden: false 
                 });
             } else {
+                // If editing and no new file was selected, keep the existing image
+                const existingImage = notices[editingKey] ? notices[editingKey].image : '';
                 notices[editingKey] = { 
                     ...notices[editingKey], 
                     heading, 
@@ -504,7 +515,7 @@
                     content, 
                     editedBy: currentUser.name,
                     editedAt: timeStr,
-                    image: base64Image || notices[editingKey].image || '' 
+                    image: base64Image !== '' ? base64Image : existingImage 
                 };
             }
 
@@ -516,13 +527,21 @@
             document.getElementById('noticeHeading').value = notice.heading;
             document.getElementById('noticePriority').value = notice.priority || 'normal';
             document.getElementById('noticeContent').innerHTML = notice.content;
-            base64Image = notice.image || '';
             
+            base64Image = notice.image || '';
             const previewBox = document.getElementById('imagePreviewBox');
             const previewImg = document.getElementById('imagePreview');
+            const pixelBadge = document.getElementById('pixelBadge');
+
             if (base64Image) {
                 previewImg.src = base64Image;
                 previewBox.style.display = 'flex';
+                
+                const tempImg = new Image();
+                tempImg.onload = function() {
+                    pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
+                };
+                tempImg.src = base64Image;
             } else {
                 previewImg.src = '';
                 previewBox.style.display = 'none';
