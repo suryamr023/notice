@@ -77,23 +77,27 @@
         }
 
         .editor-toolbar {
-            background: #f8fafc; padding: 6px; border: 1px solid var(--border);
-            border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+            background: #f8fafc; padding: 8px; border: 1px solid var(--border);
+            border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
         }
         .editor-toolbar button, .editor-toolbar select {
-            background: #fff; border: 1px solid var(--border); padding: 5px 8px;
+            background: #fff; border: 1px solid var(--border); padding: 6px 10px;
             border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; color: #334155;
         }
         .editor-toolbar button.active { background: #e0e7ff; color: var(--primary); border-color: var(--primary); }
 
-        .color-palette { display: inline-flex; gap: 3px; align-items: center; background: #fff; border: 1px solid var(--border); padding: 2px 4px; border-radius: 6px; }
+        .color-palette { display: inline-flex; gap: 4px; align-items: center; background: #fff; border: 1px solid var(--border); padding: 3px 6px; border-radius: 6px; }
         .color-dot { width: 14px; height: 14px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); display: inline-block; }
         .color-dot.active-color { transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary); }
 
         .content-editable {
-            width: 100%; min-height: 180px; padding: 12px; border: 1px solid var(--border);
-            border-radius: 0 0 8px 8px; background: #fff; overflow-y: auto; font-size: 15px; line-height: 1.5;
+            width: 100%; min-height: 220px; padding: 16px; border: 1px solid var(--border);
+            border-radius: 0 0 8px 8px; background: #fff; overflow-y: auto; font-size: 15px; line-height: 1.6;
         }
+        .content-editable ul { padding-left: 25px; margin: 8px 0; list-style-type: disc !important; }
+        .content-editable ol { padding-left: 25px; margin: 8px 0; list-style-type: decimal !important; }
+        .content-editable li { margin-bottom: 4px; }
+        .content-editable img { max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0; display: block; }
 
         .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; width: 100%; }
         @media (min-width: 640px) { .btn-primary { width: auto; } }
@@ -110,7 +114,7 @@
         }
         @media (min-width: 640px) { .notice-item-card { flex-direction: row; align-items: center; justify-content: space-between; } }
 
-        .notice-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+        .notice-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; flex-grow: 1; }
         .notice-item-thumb {
             width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
             flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
@@ -126,7 +130,6 @@
         .unhide-btn { background: #16a34a; }
         .delete-btn { background: #dc2626; }
         .restore-btn { background: #16a34a; }
-        .disabled-action { opacity: 0.4; cursor: not-allowed !important; pointer-events: none; }
 
         .badge { padding: 2px 6px; font-size: 9px; font-weight: 800; border-radius: 4px; color: white; text-transform: uppercase; }
         .badge-visible { background: #16a34a; }
@@ -136,7 +139,7 @@
         .priority-urgent { background: #dc2626; }
 
         .empty-state { text-align: center; padding: 25px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.9rem; }
-        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; }
+        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; display: none; }
 
         .site-footer { text-align: center; padding: 20px 0 10px 0; font-size: 0.80rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px; }
     </style>
@@ -191,24 +194,26 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="noticeImage">Attach Image (Optional)</label>
+                    <label for="noticeImage">Attach Banner Image (Optional)</label>
                     <input type="file" id="noticeImage" accept="image/*">
                 </div>
             </div>
 
             <div class="form-group" style="margin-top: 10px;">
-                <label>Content</label>
+                <label>Content & Alignment</label>
                 <div class="editor-toolbar">
                     <button type="button" onclick="window.formatDoc('bold')" title="Bold"><b>B</b></button>
                     <button type="button" onclick="window.formatDoc('italic')" title="Italic"><i>I</i></button>
                     <button type="button" onclick="window.formatDoc('underline')" title="Underline"><u>U</u></button>
                     <button type="button" onclick="window.formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                    
                     <select id="select-fontName" onchange="window.formatDoc('fontName', this.value)">
                         <option value="">Font</option>
                         <option value="Calibri">Calibri</option>
                         <option value="Arial">Arial</option>
                         <option value="Segoe UI">Segoe UI</option>
                     </select>
+                    
                     <select id="select-fontSize" onchange="window.formatDoc('fontSize', this.value)">
                         <option value="">Size</option>
                         <option value="3">12pt</option>
@@ -216,14 +221,22 @@
                         <option value="5">18pt</option>
                         <option value="6">24pt</option>
                     </select>
+                    
                     <div class="color-palette">
                         <span class="color-dot active-color" style="background:#1e293b;" onclick="window.setTextColor('#1e293b', this)"></span>
                         <span class="color-dot" style="background:#dc2626;" onclick="window.setTextColor('#dc2626', this)"></span>
                         <span class="color-dot" style="background:#16a34a;" onclick="window.setTextColor('#16a34a', this)"></span>
                         <span class="color-dot" style="background:#2563eb;" onclick="window.setTextColor('#2563eb', this)"></span>
                     </div>
-                    <button type="button" onclick="window.formatDoc('insertUnorderedList')">• List</button>
-                    <button type="button" onclick="window.formatDoc('removeFormat')">🧹</button>
+
+                    <button type="button" onclick="window.formatDoc('justifyLeft')" title="Align Left">⬅</button>
+                    <button type="button" onclick="window.formatDoc('justifyCenter')" title="Align Center">🗚</button>
+                    <button type="button" onclick="window.formatDoc('justifyRight')" title="Align Right">➡</button>
+                    <button type="button" onclick="window.formatDoc('justifyFull')" title="Justify">🗛</button>
+
+                    <button type="button" onclick="window.formatDoc('insertUnorderedList')" title="Bullet List">• List</button>
+                    <button type="button" onclick="window.formatDoc('insertOrderedList')" title="Numbered List">1. List</button>
+                    <button type="button" onclick="window.insertImageInline()" title="Insert Inline Image">🖼️ Image</button>
                 </div>
                 <div id="noticeContent" class="content-editable" contenteditable="true" placeholder="Type or paste contents here..."></div>
             </div>
@@ -237,9 +250,8 @@
         <h2>Active & Hidden Notices</h2>
         <div class="notice-list-container" id="noticeListContainer"></div>
 
-        <div class="recycle-bin-section">
-            <h2 style="color: #b91c1c; font-size: 1.1rem;">🗑️ Recycle Bin</h2>
-            <p style="font-size: 12px; color: #b91c1c; margin-bottom: 10px;" id="trashPermissionMsg"></p>
+        <div class="recycle-bin-section" id="recycleBinSection">
+            <h2 style="color: #b91c1c; font-size: 1.1rem;">🗑️ Recycle Bin (Super Admin Audit Log)</h2>
             <div class="notice-list-container" id="trashListContainer" style="margin-bottom:0;"></div>
         </div>
     </div>
@@ -287,9 +299,10 @@
                 const data = snapshot.val();
                 if (!data) {
                     const defaultUsers = { 
-                        "surya": { pass: "0203", role: "admin", name: "Surya (Master Admin)" } 
+                        "admin": { pass: "admin_s", role: "superadmin", name: "Super Administrator" } 
                     };
                     set(ref(db, 'users'), defaultUsers);
+                    globalUsers = defaultUsers;
                 } else {
                     globalUsers = data;
                 }
@@ -313,8 +326,10 @@
             const p = document.getElementById('loginPass').value.trim();
             const errDiv = document.getElementById('loginError');
 
-            if (globalUsers[u] && globalUsers[u].pass === p) {
-                currentUser = { username: u, ...globalUsers[u] };
+            // Fallback direct check for admin / admin_s even if firebase sync lags
+            if ((u === 'admin' && p === 'admin_s') || (globalUsers[u] && globalUsers[u].pass === p)) {
+                const userData = globalUsers[u] || { role: 'superadmin', name: 'Super Administrator' };
+                currentUser = { username: u, ...userData };
                 sessionStorage.setItem('activeUser', JSON.stringify(currentUser));
                 document.getElementById('loginOverlay').style.display = 'none';
                 errDiv.style.display = 'none';
@@ -337,21 +352,15 @@
             } else {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('currentUserName').innerText = currentUser.name;
-                document.getElementById('currentUserRoleText').innerText = currentUser.role;
+                document.getElementById('currentUserRoleText').innerText = currentUser.role || 'superadmin';
                 
                 const manageLink = document.getElementById('manageUsersLink');
-                // Only 'admin' role can see account creation / user management
-                if (currentUser.role === 'admin') {
+                if (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.username === 'admin') {
                     manageLink.style.display = 'inline-block';
+                    document.getElementById('recycleBinSection').style.display = 'block';
                 } else {
                     manageLink.style.display = 'none';
-                }
-
-                const trashMsg = document.getElementById('trashPermissionMsg');
-                if (currentUser.role === 'user') {
-                    trashMsg.innerText = "Notice: 'User' role can view recycle bin items, but only Managers and Admins can purge or restore them.";
-                } else {
-                    trashMsg.innerText = "";
+                    document.getElementById('recycleBinSection').style.display = 'none';
                 }
             }
         }
@@ -381,6 +390,29 @@
             element.classList.add('active-color');
         }
 
+        window.insertImageInline = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        editor.focus();
+                        if (savedSelection) {
+                            const sel = window.getSelection();
+                            sel.removeAllRanges();
+                            sel.addRange(savedSelection);
+                        }
+                        document.execCommand('insertImage', false, event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
         window.saveNotice = function() {
             const heading = document.getElementById('noticeHeading').value.trim();
             const priority = document.getElementById('noticePriority').value;
@@ -393,9 +425,24 @@
 
             let notices = [...globalNotices];
             if (editingKey === null) {
-                notices.push({ heading, priority, addedBy: currentUser.name, content, image: base64Image, hidden: false });
+                notices.push({ 
+                    heading, 
+                    priority, 
+                    addedBy: currentUser.name, 
+                    editedBy: '', 
+                    content, 
+                    image: base64Image, 
+                    hidden: false 
+                });
             } else {
-                notices[editingKey] = { ...notices[editingKey], heading, priority, content, image: base64Image || notices[editingKey].image || '' };
+                notices[editingKey] = { 
+                    ...notices[editingKey], 
+                    heading, 
+                    priority, 
+                    content, 
+                    editedBy: currentUser.name,
+                    image: base64Image || notices[editingKey].image || '' 
+                };
             }
 
             set(ref(db, 'notices'), notices).then(() => window.resetForm());
@@ -434,7 +481,10 @@
         window.moveToTrash = function(index) {
             let notices = [...globalNotices];
             let trash = [...globalTrash];
-            trash.push({ ...notices[index], deletedAt: Date.now(), deletedBy: currentUser.name });
+            const now = new Date();
+            const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            trash.push({ ...notices[index], deletedAt: timeStr, deletedBy: currentUser.name });
             notices.splice(index, 1);
             set(ref(db, 'notices'), notices);
             set(ref(db, 'trash'), trash);
@@ -442,7 +492,6 @@
         }
 
         window.restoreFromTrash = function(index) {
-            if (currentUser.role === 'user') { alert("Permission Denied: 'User' role cannot restore items."); return; }
             let trash = [...globalTrash];
             let notices = [...globalNotices];
             const item = trash[index];
@@ -454,7 +503,6 @@
         }
 
         window.permanentDelete = function(index) {
-            if (currentUser.role === 'user') { alert("Permission Denied: 'User' role cannot purge items."); return; }
             if (confirm('Permanently delete this item?')) {
                 let trash = [...globalTrash];
                 trash.splice(index, 1);
@@ -463,12 +511,15 @@
         }
 
         function renderAdminTables() {
-            const isUserRole = currentUser && currentUser.role === 'user';
             const container = document.getElementById('noticeListContainer');
             container.innerHTML = globalNotices.length === 0 ? `<div class="empty-state">📭 No active notices found.</div>` : '';
             
             globalNotices.forEach((notice, index) => {
                 const isHidden = notice.hidden === true;
+                const authorInfo = notice.editedBy 
+                    ? `<span>By: ${escapeHTML(notice.addedBy || '')}</span> <span style="color:#0284c7;">(Edited by: ${escapeHTML(notice.editedBy)})</span>`
+                    : `<span>By: ${escapeHTML(notice.addedBy || '')}</span>`;
+
                 container.innerHTML += `
                     <div class="notice-item-card">
                         <div class="notice-item-left">
@@ -478,7 +529,7 @@
                                 <div class="notice-meta-tags">
                                     <span class="badge priority-${notice.priority || 'normal'}">${notice.priority || 'normal'}</span>
                                     <span class="badge ${isHidden ? 'badge-hidden' : 'badge-visible'}">${isHidden ? 'Hidden' : 'Visible'}</span>
-                                    <span>By: ${escapeHTML(notice.addedBy || '')}</span>
+                                    ${authorInfo}
                                 </div>
                             </div>
                         </div>
@@ -490,24 +541,29 @@
                     </div>`;
             });
 
-            const trashContainer = document.getElementById('trashListContainer');
-            trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>` : '';
-            
-            globalTrash.forEach((item, index) => {
-                trashContainer.innerHTML += `
-                    <div class="notice-item-card" style="background:#fff;">
-                        <div class="notice-item-left">
-                            <div class="notice-item-info">
-                                <h4>${escapeHTML(item.heading)}</h4>
-                                <div class="notice-meta-tags"><span>Deleted by: ${escapeHTML(item.deletedBy || '')}</span></div>
+            if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.username === 'admin')) {
+                const trashContainer = document.getElementById('trashListContainer');
+                trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>` : '';
+                
+                globalTrash.forEach((item, index) => {
+                    trashContainer.innerHTML += `
+                        <div class="notice-item-card" style="background:#fff;">
+                            <div class="notice-item-left">
+                                <div class="notice-item-info">
+                                    <h4>${escapeHTML(item.heading)}</h4>
+                                    <div class="notice-meta-tags">
+                                        <span>🗑️ Deleted by: <strong>${escapeHTML(item.deletedBy || 'Unknown')}</strong></span>
+                                        <span>🕒 Time: ${escapeHTML(item.deletedAt || 'N/A')}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="action-btns">
-                            <button class="restore-btn ${isUserRole ? 'disabled-action' : ''}" onclick="window.restoreFromTrash(${index})">Restore</button>
-                            <button class="delete-btn ${isUserRole ? 'disabled-action' : ''}" onclick="window.permanentDelete(${index})">Purge</button>
-                        </div>
-                    </div>`;
-            });
+                            <div class="action-btns">
+                                <button class="restore-btn" onclick="window.restoreFromTrash(${index})">Restore</button>
+                                <button class="delete-btn" onclick="window.permanentDelete(${index})">Purge</button>
+                            </div>
+                        </div>`;
+                });
+            }
         }
 
         function escapeHTML(str) {
