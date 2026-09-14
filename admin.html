@@ -76,6 +76,17 @@
             width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc;
         }
 
+        .image-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
+        
+        .preview-container {
+            margin-top: 8px; display: none; width: 100%; max-height: 160px;
+            border-radius: 8px; border: 1px dashed var(--border); background: #f1f5f9;
+            overflow: hidden; align-items: center; justify-content: center; position: relative;
+        }
+        .preview-container img {
+            width: 100%; height: 100%; max-height: 150px; object-fit: contain; border-radius: 6px;
+        }
+
         .filter-bar {
             display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
         }
@@ -104,7 +115,7 @@
         .content-editable ul { padding-left: 25px; margin: 8px 0; list-style-type: disc !important; }
         .content-editable ol { padding-left: 25px; margin: 8px 0; list-style-type: decimal !important; }
         .content-editable li { margin-bottom: 4px; }
-        .content-editable img { max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0; display: block; }
+        .content-editable img { max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0; display: block; object-fit: contain; }
 
         .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; width: 100%; }
         @media (min-width: 640px) { .btn-primary { width: auto; } }
@@ -123,7 +134,7 @@
 
         .notice-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; flex-grow: 1; }
         .notice-item-thumb {
-            width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
+            width: 48px; height: 40px; border-radius: 6px; object-fit: contain; border: 1px solid var(--border);
             flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
         }
         .notice-item-info h4 { font-size: 0.95rem; color: var(--text-main); font-weight: 700; margin-bottom: 3px; word-break: break-word; }
@@ -203,6 +214,10 @@
                 <div class="form-group">
                     <label for="noticeImage">Attach Banner Image (Optional)</label>
                     <input type="file" id="noticeImage" accept="image/*">
+                    <div class="image-hint">📐 Recommended size: <strong>800 × 300 pixels</strong> (Fits without cropping)</div>
+                    <div class="preview-container" id="imagePreviewBox">
+                        <img id="imagePreview" src="" alt="Banner Preview">
+                    </div>
                 </div>
             </div>
 
@@ -398,10 +413,21 @@
 
         document.getElementById('noticeImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
+            const previewBox = document.getElementById('imagePreviewBox');
+            const previewImg = document.getElementById('imagePreview');
+
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) { base64Image = e.target.result; };
+                reader.onload = function(e) {
+                    base64Image = e.target.result;
+                    previewImg.src = base64Image;
+                    previewBox.style.display = 'flex';
+                };
                 reader.readAsDataURL(file);
+            } else {
+                base64Image = '';
+                previewImg.src = '';
+                previewBox.style.display = 'none';
             }
         });
 
@@ -491,6 +517,17 @@
             document.getElementById('noticePriority').value = notice.priority || 'normal';
             document.getElementById('noticeContent').innerHTML = notice.content;
             base64Image = notice.image || '';
+            
+            const previewBox = document.getElementById('imagePreviewBox');
+            const previewImg = document.getElementById('imagePreview');
+            if (base64Image) {
+                previewImg.src = base64Image;
+                previewBox.style.display = 'flex';
+            } else {
+                previewImg.src = '';
+                previewBox.style.display = 'none';
+            }
+
             editingKey = index;
             document.getElementById('formTitle').innerText = 'Edit Notice';
             document.getElementById('submitBtn').innerText = 'Update Notice';
@@ -504,6 +541,8 @@
             document.getElementById('noticeContent').innerHTML = '';
             document.getElementById('noticeImage').value = '';
             base64Image = '';
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('imagePreviewBox').style.display = 'none';
             document.getElementById('formTitle').innerText = 'Add New Notice';
             document.getElementById('submitBtn').innerText = 'Add Notice';
             document.getElementById('cancelBtn').style.display = 'none';
@@ -576,7 +615,7 @@
                 container.innerHTML += `
                     <div class="notice-item-card">
                         <div class="notice-item-left">
-                            <div class="notice-item-thumb">${notice.image ? `<img src="${notice.image}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : 'Img'}</div>
+                            <div class="notice-item-thumb">${notice.image ? `<img src="${notice.image}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">` : 'Img'}</div>
                             <div class="notice-item-info">
                                 <h4>${escapeHTML(notice.heading)}</h4>
                                 <div class="notice-meta-tags">
