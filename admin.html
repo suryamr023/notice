@@ -9,11 +9,19 @@
         :root {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
-            --bg: #f8fafc;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
+        }
+
+        body.theme-night {
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #0f172a 100%);
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,12 +31,13 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 12px;
-            background: var(--bg);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: background 1s ease, color 1s ease;
         }
 
         .main-content-wrapper { flex-grow: 1; width: 100%; }
@@ -39,18 +48,18 @@
             justify-content: center; z-index: 9999; backdrop-filter: blur(4px); padding: 15px;
         }
         .login-box {
-            background: #ffffff; padding: 25px; border-radius: 16px;
+            background: var(--card-bg); padding: 25px; border-radius: 16px;
             width: 100%; max-width: 380px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
             text-align: center; border: 1px solid var(--border);
         }
         .login-box h2 { margin-bottom: 15px; color: var(--text-main); font-weight: 800; font-size: 1.3rem; }
         .login-box .form-group { margin-bottom: 12px; text-align: left; }
-        .login-box input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc; }
+        .login-box input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: rgba(0,0,0,0.02); color: var(--text-main); }
         .login-error { color: #dc2626; font-size: 12px; margin-bottom: 10px; display: none; }
 
         .top-bar {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; background: #ffffff; padding: 14px 16px;
+            margin-bottom: 20px; background: var(--card-bg); padding: 14px 16px;
             border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
         }
@@ -71,55 +80,47 @@
         @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
 
         .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.82rem; color: #475569; }
+        label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.82rem; color: var(--text-muted); }
         input[type="text"], input[type="password"], select, input[type="file"] {
-            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc;
+            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: rgba(0,0,0,0.02); color: var(--text-main);
         }
+        select option { background: var(--card-bg); color: var(--text-main); }
 
         .image-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
         
         .preview-container {
             margin-top: 8px; display: none; width: 100%; max-height: 180px;
-            border-radius: 8px; border: 1px dashed var(--border); background: #f1f5f9;
+            border-radius: 8px; border: 1px dashed var(--border); background: rgba(0,0,0,0.02);
             overflow: hidden; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 8px;
         }
-        .preview-container img {
-            width: 100%; max-height: 130px; object-fit: contain; border-radius: 6px;
-        }
+        .preview-container img { width: 100%; max-height: 130px; object-fit: contain; border-radius: 6px; }
         .pixel-badge {
             margin-top: 5px; background: #0f172a; color: #fff; font-size: 10px; font-weight: 700;
             padding: 2px 8px; border-radius: 4px; font-family: 'Fira Code', monospace;
         }
 
-        .filter-bar {
-            display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
-        }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .filter-bar input, .filter-bar select {
-            flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 14px;
+            flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-size: 14px;
         }
 
         .editor-toolbar {
-            background: #f8fafc; padding: 8px; border: 1px solid var(--border);
+            background: rgba(0,0,0,0.02); padding: 8px; border: 1px solid var(--border);
             border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
         }
         .editor-toolbar button, .editor-toolbar select {
-            background: #fff; border: 1px solid var(--border); padding: 6px 10px;
-            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; color: #334155;
+            background: var(--card-bg); border: 1px solid var(--border); padding: 6px 10px;
+            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; color: var(--text-main);
         }
-        .editor-toolbar button.active { background: #e0e7ff; color: var(--primary); border-color: var(--primary); }
 
-        .color-palette { display: inline-flex; gap: 4px; align-items: center; background: #fff; border: 1px solid var(--border); padding: 3px 6px; border-radius: 6px; }
+        .color-palette { display: inline-flex; gap: 4px; align-items: center; background: var(--card-bg); border: 1px solid var(--border); padding: 3px 6px; border-radius: 6px; }
         .color-dot { width: 14px; height: 14px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); display: inline-block; }
         .color-dot.active-color { transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary); }
 
         .content-editable {
             width: 100%; min-height: 220px; padding: 16px; border: 1px solid var(--border);
-            border-radius: 0 0 8px 8px; background: #fff; overflow-y: auto; font-size: 15px; line-height: 1.6;
+            border-radius: 0 0 8px 8px; background: var(--card-bg); color: var(--text-main); overflow-y: auto; font-size: 15px; line-height: 1.6;
         }
-        .content-editable ul { padding-left: 25px; margin: 8px 0; list-style-type: disc !important; }
-        .content-editable ol { padding-left: 25px; margin: 8px 0; list-style-type: decimal !important; }
-        .content-editable li { margin-bottom: 4px; }
-        .content-editable img { max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0; display: block; object-fit: contain; }
 
         .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; width: 100%; }
         @media (min-width: 640px) { .btn-primary { width: auto; } }
@@ -130,7 +131,7 @@
         .notice-list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; margin-bottom: 25px; }
 
         .notice-item-card {
-            background: #ffffff; border-radius: 12px; padding: 14px;
+            background: var(--card-bg); border-radius: 12px; padding: 14px;
             border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             display: flex; flex-direction: column; gap: 12px;
         }
@@ -139,7 +140,7 @@
         .notice-item-left { display: flex; align-items: center; gap: 12px; overflow: hidden; flex-grow: 1; }
         .notice-item-thumb {
             width: 48px; height: 40px; border-radius: 6px; object-fit: contain; border: 1px solid var(--border);
-            flex-shrink: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
+            flex-shrink: 0; background: rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted);
         }
         .notice-item-info h4 { font-size: 0.95rem; color: var(--text-main); font-weight: 700; margin-bottom: 3px; word-break: break-word; }
         .notice-meta-tags { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
@@ -160,8 +161,8 @@
         .priority-important { background: #d97706; }
         .priority-urgent { background: #dc2626; }
 
-        .empty-state { text-align: center; padding: 25px; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.9rem; }
-        .recycle-bin-section { background: #fff5f5; padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; display: none; }
+        .empty-state { text-align: center; padding: 25px; background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.9rem; }
+        .recycle-bin-section { background: rgba(239, 68, 68, 0.05); padding: 16px; border: 1px dashed #fca5a5; border-radius: 14px; margin-top: 30px; display: none; }
 
         .site-footer { text-align: center; padding: 20px 0 10px 0; font-size: 0.80rem; color: var(--text-muted); font-weight: 600; border-top: 1px solid var(--border); margin-top: 30px; }
     </style>
@@ -191,12 +192,12 @@
                 <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
             </div>
             <div class="user-info">
-                👤 <span id="currentUserName"></span> (<span id="currentUserRoleText" style="text-transform:capitalize; color:#64748b;"></span>)
+                👤 <span id="currentUserName"></span> (<span id="currentUserRoleText" style="text-transform:capitalize;"></span>)
                 <button class="logout-btn" onclick="window.handleLogout()">Logout</button>
             </div>
         </div>
 
-        <div class="form-card" id="formCardContainer">
+        <div class="form-card">
             <h1 id="formTitle">Add New Notice</h1>
             
             <div class="form-row">
@@ -313,29 +314,24 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        function updateThemeAutomatically() {
+            const now = new Date();
+            const currentTimeVal = now.getHours() * 60 + now.getMinutes();
+            const isDayTime = currentTimeVal >= (6 * 60 + 8) && currentTimeVal < (18 * 60 + 19);
+            if (isDayTime) document.body.classList.remove('theme-night');
+            else document.body.classList.add('theme-night');
+        }
+        setInterval(updateThemeAutomatically, 30000);
+        updateThemeAutomatically();
+
         let savedSelection = null;
         const editor = document.getElementById('noticeContent');
-
         editor.addEventListener('mouseup', () => {
             const sel = window.getSelection();
             if (sel.rangeCount > 0) savedSelection = sel.getRangeAt(0);
         });
 
         let currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
-        let inactivityTimer = null;
-
-        function resetInactivityTimer() {
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                alert("Session expired due to 30 minutes of inactivity.");
-                window.handleLogout();
-            }, 30 * 60 * 1000);
-        }
-
-        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt => {
-            window.addEventListener(evt, resetInactivityTimer);
-        });
-
         let editingKey = null;
         let base64Image = '';
         let globalNotices = [];
@@ -344,19 +340,13 @@
 
         window.onload = function() {
             checkAuthSession();
-            resetInactivityTimer();
-
             onValue(ref(db, 'users'), (snapshot) => {
                 const data = snapshot.val();
                 if (!data) {
-                    const defaultUsers = { 
-                        "admin": { pass: "admin_s", role: "superadmin", name: "Super Administrator" } 
-                    };
+                    const defaultUsers = { "admin": { pass: "admin_s", role: "superadmin", name: "Super Administrator" } };
                     set(ref(db, 'users'), defaultUsers);
                     globalUsers = defaultUsers;
-                } else {
-                    globalUsers = data;
-                }
+                } else { globalUsers = data; }
             });
 
             onValue(ref(db, 'notices'), (snapshot) => {
@@ -378,17 +368,13 @@
             const errDiv = document.getElementById('loginError');
 
             if ((u === 'admin' && p === 'admin_s') || (globalUsers[u] && globalUsers[u].pass === p)) {
-                const userData = globalUsers[u] || { role: 'superadmin', name: 'Super Administrator' };
-                currentUser = { username: u, ...userData };
+                currentUser = { username: u, ...(globalUsers[u] || { role: 'superadmin', name: 'Super Administrator' }) };
                 sessionStorage.setItem('activeUser', JSON.stringify(currentUser));
                 document.getElementById('loginOverlay').style.display = 'none';
                 errDiv.style.display = 'none';
                 checkAuthSession();
                 window.renderAdminTables();
-                resetInactivityTimer();
-            } else {
-                errDiv.style.display = 'block';
-            }
+            } else { errDiv.style.display = 'block'; }
         }
 
         window.handleLogout = function() {
@@ -428,12 +414,8 @@
                     base64Image = e.target.result;
                     previewImg.src = base64Image;
                     previewBox.style.display = 'flex';
-
-                    // Detect exact pixel dimensions
                     const tempImg = new Image();
-                    tempImg.onload = function() {
-                        pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
-                    };
+                    tempImg.onload = () => pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
                     tempImg.src = base64Image;
                 };
                 reader.readAsDataURL(file);
@@ -484,41 +466,18 @@
             const priority = document.getElementById('noticePriority').value;
             const content = document.getElementById('noticeContent').innerHTML.trim();
 
-            if (!heading || !content || content === '<br>') {
-                alert('Please fill out heading and content.');
-                return;
-            }
+            if (!heading || !content || content === '<br>') { alert('Please fill out heading and content.'); return; }
 
             const now = new Date();
             const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             let notices = [...globalNotices];
             if (editingKey === null) {
-                notices.push({ 
-                    heading, 
-                    priority, 
-                    addedBy: currentUser.name, 
-                    createdAt: timeStr,
-                    editedBy: '', 
-                    editedAt: '',
-                    content, 
-                    image: base64Image, 
-                    hidden: false 
-                });
+                notices.push({ heading, priority, addedBy: currentUser.name, createdAt: timeStr, editedBy: '', editedAt: '', content, image: base64Image, hidden: false });
             } else {
-                // If editing and no new file was selected, keep the existing image
                 const existingImage = notices[editingKey] ? notices[editingKey].image : '';
-                notices[editingKey] = { 
-                    ...notices[editingKey], 
-                    heading, 
-                    priority, 
-                    content, 
-                    editedBy: currentUser.name,
-                    editedAt: timeStr,
-                    image: base64Image !== '' ? base64Image : existingImage 
-                };
+                notices[editingKey] = { ...notices[editingKey], heading, priority, content, editedBy: currentUser.name, editedAt: timeStr, image: base64Image !== '' ? base64Image : existingImage };
             }
-
             set(ref(db, 'notices'), notices).then(() => window.resetForm());
         }
 
@@ -536,11 +495,8 @@
             if (base64Image) {
                 previewImg.src = base64Image;
                 previewBox.style.display = 'flex';
-                
                 const tempImg = new Image();
-                tempImg.onload = function() {
-                    pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
-                };
+                tempImg.onload = () => pixelBadge.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight} px`;
                 tempImg.src = base64Image;
             } else {
                 previewImg.src = '';
@@ -578,7 +534,6 @@
             let trash = [...globalTrash];
             const now = new Date();
             const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
             trash.push({ ...notices[index], deletedAt: timeStr, deletedBy: currentUser.name });
             notices.splice(index, 1);
             set(ref(db, 'notices'), notices);
@@ -622,43 +577,40 @@
 
             if (filteredNotices.length === 0) {
                 container.innerHTML = `<div class="empty-state">📭 No matching notices found.</div>`;
-                return;
-            }
+            } else {
+                filteredNotices.forEach(({ notice, origIndex }) => {
+                    const isHidden = notice.hidden === true;
+                    const authorInfo = notice.editedBy ? `<span>By: ${escapeHTML(notice.addedBy || '')}</span> <span style="color:#0284c7;">(Edited by: ${escapeHTML(notice.editedBy)})</span>` : `<span>By: ${escapeHTML(notice.addedBy || '')}</span>`;
 
-            filteredNotices.forEach(({ notice, origIndex }) => {
-                const isHidden = notice.hidden === true;
-                const authorInfo = notice.editedBy 
-                    ? `<span>By: ${escapeHTML(notice.addedBy || '')}</span> <span style="color:#0284c7;" title="Edited at ${notice.editedAt || ''}">(Edited by: ${escapeHTML(notice.editedBy)})</span>`
-                    : `<span>By: ${escapeHTML(notice.addedBy || '')}</span>`;
-
-                container.innerHTML += `
-                    <div class="notice-item-card">
-                        <div class="notice-item-left">
-                            <div class="notice-item-thumb">${notice.image ? `<img src="${notice.image}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">` : 'Img'}</div>
-                            <div class="notice-item-info">
-                                <h4>${escapeHTML(notice.heading)}</h4>
-                                <div class="notice-meta-tags">
-                                    <span class="badge priority-${notice.priority || 'normal'}">${notice.priority || 'normal'}</span>
-                                    <span class="badge ${isHidden ? 'badge-hidden' : 'badge-visible'}">${isHidden ? 'Hidden' : 'Visible'}</span>
-                                    ${authorInfo}
+                    container.innerHTML += `
+                        <div class="notice-item-card">
+                            <div class="notice-item-left">
+                                <div class="notice-item-thumb">${notice.image ? `<img src="${notice.image}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">` : 'Img'}</div>
+                                <div class="notice-item-info">
+                                    <h4>${escapeHTML(notice.heading)}</h4>
+                                    <div class="notice-meta-tags">
+                                        <span class="badge priority-${notice.priority || 'normal'}">${notice.priority || 'normal'}</span>
+                                        <span class="badge ${isHidden ? 'badge-hidden' : 'badge-visible'}">${isHidden ? 'Hidden' : 'Visible'}</span>
+                                        ${authorInfo}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="action-btns">
-                            <button class="edit-btn" onclick="window.editNotice(${origIndex})">Edit</button>
-                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${origIndex})">${isHidden ? 'Show' : 'Hide'}</button>
-                            <button class="delete-btn" onclick="window.moveToTrash(${origIndex})">Del</button>
-                        </div>
-                    </div>`;
-            });
+                            <div class="action-btns">
+                                <button class="edit-btn" onclick="window.editNotice(${origIndex})">Edit</button>
+                                <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${origIndex})">${isHidden ? 'Show' : 'Hide'}</button>
+                                <button class="delete-btn" onclick="window.moveToTrash(${origIndex})">Del</button>
+                            </div>
+                        </div>`;
+                });
+            }
 
             if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.username === 'admin')) {
                 const trashContainer = document.getElementById('trashListContainer');
-                trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:#fff;">♻️ Recycle bin is empty.</div>` : '';
+                trashContainer.innerHTML = globalTrash.length === 0 ? `<div class="empty-state" style="background:var(--card-bg);">♻️ Recycle bin is empty.</div>` : '';
                 
                 globalTrash.forEach((item, index) => {
                     trashContainer.innerHTML += `
-                        <div class="notice-item-card" style="background:#fff;">
+                        <div class="notice-item-card" style="background:var(--card-bg);">
                             <div class="notice-item-left">
                                 <div class="notice-item-info">
                                     <h4>${escapeHTML(item.heading)}</h4>
