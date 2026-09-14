@@ -161,6 +161,7 @@
                         <option value="user">User (Post, Edit, Hide, Trash)</option>
                         <option value="moderator">Moderator (All except login creation)</option>
                         <option value="admin">Admin (Full Access & Deletable)</option>
+                        <option value="superadmin">Super Admin (Full System Access)</option>
                     </select>
                 </div>
                 <div class="modal-actions">
@@ -172,7 +173,7 @@
 
         <div id="accessDenied" style="display:none;">
             <h2 style="color: #dc2626; margin-bottom: 8px;">⛔ Access Denied</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Admin or Super Admin access required to manage users.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Super Admin access required to manage users.</p>
         </div>
     </div>
 
@@ -203,13 +204,12 @@
         let globalTrashUsers = {};
 
         window.onload = function() {
-            if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'admin')) {
+            if (!currentUser || currentUser.role !== 'superadmin') {
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('accessDenied').style.display = 'block';
             } else {
                 document.getElementById('loggedInAs').innerText = `Logged in: ${currentUser.name}`;
                 
-                // Sync Active Users
                 onValue(ref(db, 'users'), (snapshot) => {
                     const data = snapshot.val();
                     if (!data) {
@@ -220,7 +220,6 @@
                     }
                 });
 
-                // Sync Deleted Users Recycle Bin
                 onValue(ref(db, 'trashUsers'), (snapshot) => {
                     const data = snapshot.val();
                     globalTrashUsers = data || {};
@@ -235,8 +234,6 @@
             container.innerHTML = '';
             for (let username in globalUsers) {
                 const user = globalUsers[username];
-                
-                // Hide Super Admin account from everyone except when logged in as superadmin viewing own profile if desired
                 if (username === 'admin' && currentUser.username !== 'admin') continue;
 
                 let actions = `<button class="action-btn edit-btn" onclick="window.editUser('${username}')">Edit</button>`;
@@ -311,7 +308,6 @@
             const role = document.getElementById('newRole').value;
 
             if (!uname || !fullName || !pass) { alert("Fill all fields."); return; }
-            if (role === 'superadmin') { alert("Cannot create another Super Admin!"); return; }
 
             let users = { ...globalUsers };
             if (editingUsername === null && users[uname]) { alert("Username exists!"); return; }
@@ -321,7 +317,7 @@
         }
 
         window.editUser = function(username) {
-            if (username === 'admin') { alert("Cannot edit Super Admin account here."); return; }
+            if (username === 'admin' && currentUser.username !== 'admin') { alert("Cannot edit master Super Admin account."); return; }
             const user = globalUsers[username];
             document.getElementById('newUsername').value = username;
             document.getElementById('newFullName').value = user.name;
