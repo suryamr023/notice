@@ -76,6 +76,13 @@
             width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; background: #f8fafc;
         }
 
+        .filter-bar {
+            display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
+        }
+        .filter-bar input, .filter-bar select {
+            flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 14px;
+        }
+
         .editor-toolbar {
             background: #f8fafc; padding: 8px; border: 1px solid var(--border);
             border-bottom: none; border-radius: 8px 8px 0 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
@@ -165,7 +172,7 @@
     <div class="main-content-wrapper">
         <div class="top-bar">
             <div class="nav-links-group">
-                <a href="display.html" target="_blank" class="nav-link">🔗 Public Board</a>
+                <a href="index.html" target="_blank" class="nav-link">🔗 Public Board</a>
                 <a href="users.html" class="nav-link" id="manageUsersLink" style="display:none;">⚙️ Manage Users</a>
             </div>
             <div class="user-info">
@@ -248,6 +255,15 @@
         </div>
 
         <h2>Active & Hidden Notices</h2>
+        <div class="filter-bar">
+            <input type="text" id="searchFilter" placeholder="🔍 Search notices by keyword..." oninput="window.renderAdminTables()">
+            <select id="priorityFilter" onchange="window.renderAdminTables()">
+                <option value="">All Priorities</option>
+                <option value="normal">Standard / Normal</option>
+                <option value="important">Important</option>
+                <option value="urgent">Urgent</option>
+            </select>
+        </div>
         <div class="notice-list-container" id="noticeListContainer"></div>
 
         <div class="recycle-bin-section" id="recycleBinSection">
@@ -286,6 +302,20 @@
         });
 
         let currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
+        let inactivityTimer = null;
+
+        function resetInactivityTimer() {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert("Session expired due to 30 minutes of inactivity.");
+                window.handleLogout();
+            }, 30 * 60 * 1000);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer);
+        });
+
         let editingKey = null;
         let base64Image = '';
         let globalNotices = [];
@@ -294,6 +324,7 @@
 
         window.onload = function() {
             checkAuthSession();
+            resetInactivityTimer();
 
             onValue(ref(db, 'users'), (snapshot) => {
                 const data = snapshot.val();
@@ -311,13 +342,13 @@
             onValue(ref(db, 'notices'), (snapshot) => {
                 const data = snapshot.val();
                 globalNotices = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-                renderAdminTables();
+                window.renderAdminTables();
             });
 
             onValue(ref(db, 'trash'), (snapshot) => {
                 const data = snapshot.val();
                 globalTrash = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-                renderAdminTables();
+                window.renderAdminTables();
             });
         }
 
@@ -326,7 +357,6 @@
             const p = document.getElementById('loginPass').value.trim();
             const errDiv = document.getElementById('loginError');
 
-            // Fallback direct check for admin / admin_s even if firebase sync lags
             if ((u === 'admin' && p === 'admin_s') || (globalUsers[u] && globalUsers[u].pass === p)) {
                 const userData = globalUsers[u] || { role: 'superadmin', name: 'Super Administrator' };
                 currentUser = { username: u, ...userData };
@@ -334,7 +364,8 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 errDiv.style.display = 'none';
                 checkAuthSession();
-                renderAdminTables();
+                window.renderAdminTables();
+                resetInactivityTimer();
             } else {
                 errDiv.style.display = 'block';
             }
@@ -423,13 +454,18 @@
                 return;
             }
 
+            const now = new Date();
+            const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
             let notices = [...globalNotices];
             if (editingKey === null) {
                 notices.push({ 
                     heading, 
                     priority, 
                     addedBy: currentUser.name, 
+                    createdAt: timeStr,
                     editedBy: '', 
+                    editedAt: '',
                     content, 
                     image: base64Image, 
                     hidden: false 
@@ -441,6 +477,7 @@
                     priority, 
                     content, 
                     editedBy: currentUser.name,
+                    editedAt: timeStr,
                     image: base64Image || notices[editingKey].image || '' 
                 };
             }
@@ -510,14 +547,30 @@
             }
         }
 
-        function renderAdminTables() {
+        window.renderAdminTables = function() {
             const container = document.getElementById('noticeListContainer');
-            container.innerHTML = globalNotices.length === 0 ? `<div class="empty-state">📭 No active notices found.</div>` : '';
-            
-            globalNotices.forEach((notice, index) => {
+            if (!container) return;
+            container.innerHTML = '';
+
+            const searchTerm = (document.getElementById('searchFilter').value || '').toLowerCase();
+            const priorityFilter = document.getElementById('priorityFilter').value;
+
+            const filteredNotices = globalNotices.map((notice, origIndex) => ({ notice, origIndex })).filter(({ notice }) => {
+                if (!notice) return false;
+                const matchesSearch = (notice.heading || '').toLowerCase().includes(searchTerm) || (notice.addedBy || '').toLowerCase().includes(searchTerm);
+                const matchesPriority = !priorityFilter || notice.priority === priorityFilter;
+                return matchesSearch && matchesPriority;
+            });
+
+            if (filteredNotices.length === 0) {
+                container.innerHTML = `<div class="empty-state">📭 No matching notices found.</div>`;
+                return;
+            }
+
+            filteredNotices.forEach(({ notice, origIndex }) => {
                 const isHidden = notice.hidden === true;
                 const authorInfo = notice.editedBy 
-                    ? `<span>By: ${escapeHTML(notice.addedBy || '')}</span> <span style="color:#0284c7;">(Edited by: ${escapeHTML(notice.editedBy)})</span>`
+                    ? `<span>By: ${escapeHTML(notice.addedBy || '')}</span> <span style="color:#0284c7;" title="Edited at ${notice.editedAt || ''}">(Edited by: ${escapeHTML(notice.editedBy)})</span>`
                     : `<span>By: ${escapeHTML(notice.addedBy || '')}</span>`;
 
                 container.innerHTML += `
@@ -534,9 +587,9 @@
                             </div>
                         </div>
                         <div class="action-btns">
-                            <button class="edit-btn" onclick="window.editNotice(${index})">Edit</button>
-                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${index})">${isHidden ? 'Show' : 'Hide'}</button>
-                            <button class="delete-btn" onclick="window.moveToTrash(${index})">Del</button>
+                            <button class="edit-btn" onclick="window.editNotice(${origIndex})">Edit</button>
+                            <button class="${isHidden ? 'unhide-btn' : 'hide-btn'}" onclick="window.toggleHide(${origIndex})">${isHidden ? 'Show' : 'Hide'}</button>
+                            <button class="delete-btn" onclick="window.moveToTrash(${origIndex})">Del</button>
                         </div>
                     </div>`;
             });
